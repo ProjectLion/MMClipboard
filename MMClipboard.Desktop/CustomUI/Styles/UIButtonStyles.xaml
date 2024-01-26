@@ -1,0 +1,78 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：UIButtonStyles.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2023/10/10 11:03:46  -->
+<!--  🏷️ ****************************************************************  -->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:btn="clr-namespace:HtUIKit">
+    <!--  默认style  -->
+    <!--  title  -->
+    <Style x:Key="UIButton_Title" TargetType="btn:UIButton">
+        <Setter Property="enable" Value="True" />
+        <Setter Property="cornerRadius" Value="5" />
+        <Setter Property="Background" Value="DarkCyan" />
+        <Setter Property="highLightColor" Value="#66858383" />
+        <Setter Property="titleColor" Value="White" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="btn:UIButton">
+                    <Grid>
+                        <Border Name="BackgroundBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding borderColor}"
+                                BorderThickness="{TemplateBinding borderWidth}"
+                                CornerRadius="{TemplateBinding cornerRadius}" />
+                        <Border Name="HighLightBorder"
+                                Background="{TemplateBinding highLightColor}"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="{TemplateBinding cornerRadius}" />
+                        <TextBlock Margin="3"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{TemplateBinding font}"
+                                   FontSize="{TemplateBinding fontSize}"
+                                   FontWeight="{TemplateBinding fontWeight}"
+                                   Foreground="{TemplateBinding titleColor}"
+                                   Text="{TemplateBinding title}"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!--  图片按钮  -->
+    <Style x:Key="UIButton_Image" TargetType="btn:UIButton">
+        <Setter Property="enable" Value="True" />
+        <Setter Property="cornerRadius" Value="5" />
+        <Setter Property="Background" Value="DarkCyan" />
+        <Setter Property="highLightColor" Value="#66858383" />
+        <Setter Property="titleColor" Value="White" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="imageMargin" Value="6" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="btn:UIButton">
+                    <Grid>
+                        <Border Name="BackgroundBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding borderColor}"
+                                BorderThickness="{TemplateBinding borderWidth}"
+                                CornerRadius="{TemplateBinding cornerRadius}" />
+                        <Border Name="HighLightBorder"
+                                Background="{TemplateBinding highLightColor}"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="{TemplateBinding cornerRadius}" />
+                        <Image Margin="{TemplateBinding imageMargin}" Source="{TemplateBinding image}" Stretch="Uniform" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

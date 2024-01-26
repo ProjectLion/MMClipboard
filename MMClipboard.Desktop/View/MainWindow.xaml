@@ -1,0 +1,35 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：MainWindow.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2023-12-22 10:01:45  -->
+<!--  🏷️ ****************************************************************  -->
+
+<Window x:Class="MMClipboard.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MMClipboard.ViewModel"
+        Title="妙剪记"
+        Width="1920"
+        Height="1080"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Icon="/Images/IconPng.png"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        WindowStyle="None"
+        mc:Ignorable="d">
+    <Grid Background="#00000000">
+        <Grid Height="500" Margin="15,0,15,15" VerticalAlignment="Bottom">
+            <ContentControl Content="{Binding currentView}" />
+        </Grid>
+    </Grid>
+</Window>

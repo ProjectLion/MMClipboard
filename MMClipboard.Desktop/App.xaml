@@ -1,0 +1,30 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：App.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2023/8/15 12:17:56  -->
+<!--  🏷️ ****************************************************************  -->
+
+<Application x:Class="MMClipboard.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary/StaticFonts.xaml" />
+                <ResourceDictionary Source="Dictionary/StaticSolidColors.xaml" />
+                <ResourceDictionary Source="Dictionary/TaskbarResource.xaml" />
+
+                <ResourceDictionary Source="CustomUI/Styles/UIButtonStyles.xaml" />
+                <ResourceDictionary Source="CustomUI/Styles/UIToolTipStyles.xaml" />
+                <ResourceDictionary Source="CustomUI/Styles/UIToggleButtonStyles.xaml" />
+
+                <ResourceDictionary Source="Style/CalendarStyle.xaml" />
+                <ResourceDictionary Source="Style/PageStyle.xaml" />
+                <ResourceDictionary Source="Style/TextBlockStyles.xaml" />
+                <ResourceDictionary Source="Style/ContextMenuStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

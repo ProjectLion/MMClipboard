@@ -1,0 +1,30 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：StaticSolidColors.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2023-12-22 10:01:45  -->
+<!--  🏷️ ****************************************************************  -->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 默认背景色 -->
+    <SolidColorBrush x:Key="主背景色"
+                     Color="#2D2D2D" />
+
+    <!-- Window Header Color -->
+    <SolidColorBrush x:Key="HeaderColor"
+                     Color="#1E88E5" />
+
+    <SolidColorBrush x:Key="筛选按钮.All"
+                     Color="#0277BD" />
+    <SolidColorBrush x:Key="筛选按钮.Text"
+                     Color="#646464" />
+    <SolidColorBrush x:Key="筛选按钮.Image"
+                     Color="#b9770e" />
+    <SolidColorBrush x:Key="筛选按钮.File"
+                     Color="#264d3e " />
+    <SolidColorBrush x:Key="筛选按钮.Collect"
+                     Color="#673AB7" />
+    <!--  1B813E  -->
+</ResourceDictionary>

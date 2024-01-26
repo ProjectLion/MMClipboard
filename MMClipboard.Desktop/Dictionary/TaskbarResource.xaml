@@ -1,0 +1,157 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：TaskbarResource.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2023/9/22 14:15:57  -->
+<!--  🏷️ ****************************************************************  -->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tb="http://www.hardcodet.net/taskbar"
+                    xmlns:viewmodel="clr-namespace:MMClipboard.ViewModel">
+    <tb:TaskbarIcon x:Key="Taskbar"
+                    DoubleClickCommand="{Binding clickTaskbarCommand}"
+                    IconSource="/Images/TaskbarIcon.ico"
+                    LeftClickCommand="{Binding clickTaskbarCommand}"
+                    MenuActivation="RightClick"
+                    PopupActivation="LeftClick">
+        <tb:TaskbarIcon.DataContext>
+            <viewmodel:TaskbarViewModel />
+        </tb:TaskbarIcon.DataContext>
+        <!--  Resources  -->
+        <tb:TaskbarIcon.Resources>
+            <Style x:Key="TaskbarMenu" TargetType="{x:Type ContextMenu}">
+                <Setter Property="Width" Value="130" />
+                <Setter Property="Height" Value="83" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ContextMenu}">
+                            <Border x:Name="Border"
+                                    Background="#FF2D2D2D"
+                                    BorderBrush="#FF9B9B9B"
+                                    BorderThickness="0.5"
+                                    CornerRadius="5">
+                                <!--  MenuItem 位置  -->
+                                <ItemsPresenter />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="TaskbarMenuItem" TargetType="{x:Type HeaderedItemsControl}">
+                <Setter Property="Width" Value="120" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type HeaderedItemsControl}">
+                            <Border x:Name="border"
+                                    Margin="0,3,0,3"
+                                    Padding="8"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="5"
+                                    Opacity="0.7">
+                                <TextBlock HorizontalAlignment="Center"
+                                           FontSize="14"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           Text="{TemplateBinding Header}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#33C7C7C7" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="CustomSeparator" TargetType="{x:Type Separator}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border Width="140"
+                                    Height="0.5"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="#FFCCCCCC" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </tb:TaskbarIcon.Resources>
+        <!--  Context  -->
+        <tb:TaskbarIcon.ContextMenu>
+            <ContextMenu Style="{StaticResource ResourceKey=TaskbarMenu}">
+                <!--<MenuItem
+                    Width="160"
+                    Height="140"
+                    Margin="0,3,0,3"
+                    HorizontalAlignment="Center">
+                    <MenuItem.Template>
+                        <ControlTemplate>
+                            <Border
+                                Margin="0,3,0,3"
+                                Background="Red"
+                                CornerRadius="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Button
+                                        Grid.Column="0"
+                                        Command="{Binding taskbarMenuCommand}"
+                                        CommandParameter="Setting"
+                                        Content="测试按钮" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="siyuan"
+                                        FontSize="18"
+                                        Text="测试TextBlock" />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </MenuItem.Template>
+                </MenuItem>-->
+                <MenuItem Command="{Binding taskbarMenuCommand}"
+                          CommandParameter="Setting"
+                          FontFamily="{StaticResource JetBrains Mono Regular}"
+                          Header="设置"
+                          Style="{StaticResource ResourceKey=TaskbarMenuItem}" />
+                <Separator Style="{StaticResource ResourceKey=CustomSeparator}" />
+                <MenuItem VerticalAlignment="Bottom"
+                          Command="{Binding taskbarMenuCommand}"
+                          CommandParameter="Quit"
+                          FontFamily="{StaticResource JetBrains Mono Regular}"
+                          Foreground="White"
+                          Header="退出"
+                          Style="{StaticResource ResourceKey=TaskbarMenuItem}" />
+            </ContextMenu>
+        </tb:TaskbarIcon.ContextMenu>
+        <!--  ToolTip  -->
+        <tb:TaskbarIcon.TrayToolTip>
+            <Border Background="#FF282C34"
+                    BorderBrush="#FF5A5D63"
+                    BorderThickness="0.8"
+                    CornerRadius="4">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="5"
+                                      Direction="270"
+                                      Opacity="0.4"
+                                      ShadowDepth="5"
+                                      Color="Black" />
+                </Border.Effect>
+                <TextBlock Padding="8"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource JetBrains Mono Regular}"
+                           FontSize="14"
+                           Foreground="White"
+                           Text="妙剪记" />
+            </Border>
+        </tb:TaskbarIcon.TrayToolTip>
+    </tb:TaskbarIcon>
+</ResourceDictionary>

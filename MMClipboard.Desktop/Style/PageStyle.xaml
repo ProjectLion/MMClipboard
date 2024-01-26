@@ -1,0 +1,44 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：PageStyle.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2023-12-22 10:01:45  -->
+<!--  🏷️ ****************************************************************  -->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="Page_Style"
+           TargetType="{x:Type UserControl}">
+        <Setter Property="Opacity"
+                Value="1" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TranslateTransform X="0"
+                                    Y="0" />
+            </Setter.Value>
+        </Setter>
+
+        <!-- <Style.Triggers> -->
+        <!--     <Trigger Property="Visibility" -->
+        <!--              Value="Collapsed"> -->
+        <!--         <Setter Property="Opacity" -->
+        <!--                 Value="0" /> -->
+        <!--     </Trigger> -->
+        <!--     <EventTrigger RoutedEvent="Loaded"> -->
+        <!--         <BeginStoryboard> -->
+        <!--             <Storyboard> -->
+        <!--                 <DoubleAnimation Storyboard.TargetProperty="Opacity" -->
+        <!--                                  From="0" -->
+        <!--                                  To="1" -->
+        <!--                                  Duration="0:0:0.35" /> -->
+        <!--                 <DoubleAnimation DecelerationRatio="0.5" -->
+        <!--                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" -->
+        <!--                                  From="100" -->
+        <!--                                  To="0" -->
+        <!--                                  Duration="0:0:0.35" /> -->
+        <!--             </Storyboard> -->
+        <!--         </BeginStoryboard> -->
+        <!--     </EventTrigger> -->
+        <!-- </Style.Triggers> -->
+    </Style>
+</ResourceDictionary>

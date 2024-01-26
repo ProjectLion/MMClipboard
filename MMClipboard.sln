@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtKit", "HtKit\HtKit.csproj", "{BFBA42E3-717E-4504-983A-C008EDA85883}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMClipboard", "MMClipboard.Desktop\MMClipboard.csproj", "{D69C7B7A-D72A-4AD1-840E-E5976FB92D31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFBA42E3-717E-4504-983A-C008EDA85883}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFBA42E3-717E-4504-983A-C008EDA85883}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFBA42E3-717E-4504-983A-C008EDA85883}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFBA42E3-717E-4504-983A-C008EDA85883}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D69C7B7A-D72A-4AD1-840E-E5976FB92D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D69C7B7A-D72A-4AD1-840E-E5976FB92D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D69C7B7A-D72A-4AD1-840E-E5976FB92D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D69C7B7A-D72A-4AD1-840E-E5976FB92D31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C41AEFF3-5EA0-4D3D-AE07-8B02BE72382D}
+	EndGlobalSection
+EndGlobal
