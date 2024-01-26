@@ -36,7 +36,8 @@
 - 更丰富的右键菜单
 
 ### 🎃下载
-- Release中下载最新版本
+- 无网络情况的用户请移步至 [Releases](https://github.com/ProjectLion/MMClipboard/releases) 下载安装包or压缩包后安装使用。
+- 存在网络情况的朋友请移步至 [Gitee](https://gitee.com/HtReturnTrue/MMClipboard) 或者直达 [Releases](https://gitee.com/HtReturnTrue/MMClipboard/releases) 下载安装包or压缩包后安装使用。
 
 ### 🖥️使用环境
 - Windows10.0.17763.0 later✅
