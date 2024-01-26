@@ -1,2 +1,3 @@
 *.cs linguist-language=C#
 *.xaml linguist-language=C#
+*.html linguist-language=C#
