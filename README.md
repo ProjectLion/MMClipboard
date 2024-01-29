@@ -62,15 +62,15 @@
 
 ## 🙏致谢 
 #### 感谢以下无私奉献的开源库的作者和贡献者们(排名不分先后)
-C# Zip解压缩支持库 - [__SharpZipLib__](https://github.com/icsharpcode/SharpZipLib)
-WPF Emoji表情包支持库 - [__Emoji.Wpf__](https://github.com/samhocevar/emoji.wpf)
-C# Json解析支持库 - [__Newtonsoft.Json__](https://github.com/JamesNK/Newtonsoft.Json)
-C# SQLite ORM支持库 - [__FreeSql__](https://github.com/dotnetcore/FreeSql)
-WPF Theme、UI组件工具包 - [__MaterialDesignThemes__](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
-WPF MVVM工具包 - [__CommunityToolkit.Mvvm__](https://github.com/CommunityToolkit/dotnet)
-WPF 系统托盘图标工具包 - [__Hardcodet.NotifyIcon.Wpf__](https://github.com/hardcodet/wpf-notifyicon)
-WPF xaml行为事件工具包 - [__Microsoft.Xaml.Behaviors.Wpf__](https://github.com/Microsoft/XamlBehaviorsWpf)
-WPF 内存释放工具包 - [__Lierda.WPFHelper__](https://www.nuget.org/packages/Lierda.WPFHelper)
+- C# Zip解压缩支持库 - [__SharpZipLib__](https://github.com/icsharpcode/SharpZipLib)
+- WPF Emoji表情包支持库 - [__Emoji.Wpf__](https://github.com/samhocevar/emoji.wpf)
+- C# Json解析支持库 - [__Newtonsoft.Json__](https://github.com/JamesNK/Newtonsoft.Json)
+- C# SQLite ORM支持库 - [__FreeSql__](https://github.com/dotnetcore/FreeSql)
+- WPF Theme、UI组件工具包 - [__MaterialDesignThemes__](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
+- WPF MVVM工具包 - [__CommunityToolkit.Mvvm__](https://github.com/CommunityToolkit/dotnet)
+- WPF 系统托盘图标工具包 - [__Hardcodet.NotifyIcon.Wpf__](https://github.com/hardcodet/wpf-notifyicon)
+- WPF xaml行为事件工具包 - [__Microsoft.Xaml.Behaviors.Wpf__](https://github.com/Microsoft/XamlBehaviorsWpf)
+- WPF 内存释放工具包 - [__Lierda.WPFHelper__](https://www.nuget.org/packages/Lierda.WPFHelper)
 
 ## ❗免责声明
 **禁止任何人以任何形式将其用于任何非法用途，对于使用该程序所造成的任何后果，所有创作者不承担任何责任。**
