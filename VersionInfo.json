@@ -1,8 +1,8 @@
 {
     "version": "1.24.129.1",
     "updateMsg": "新增在线更新功能",
-    "updateUrl_Github": "https://github.com/ProjectLion/MMClipboard/releases/download/Release/MMClipboard.zip",
-    "updateUrl_Gitee": "https://gitee.com/HtReturnTrue/MMClipboard/releases/download/Release/MMClipboard.zip",
+    "updateUrl_Github": "https://github.com/ProjectLion/MMClipboard/releases/download/1.24.0129.1/MMClipboard.zip",
+    "updateUrl_Gitee": "https://gitee.com/HtReturnTrue/MMClipboard/releases/download/1.24.0129.1/MMClipboard.zip",
     "updateTime": "2024-01-29",
-    "fileSize": 99764172
+    "fileSize": 99764181
 }
