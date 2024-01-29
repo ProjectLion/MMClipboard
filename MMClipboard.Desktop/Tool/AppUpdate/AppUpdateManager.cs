@@ -10,6 +10,9 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using HtKit;
+using HtKit.NetWorking;
+using MMClipboard.UserConfigs;
+using Newtonsoft.Json;
 
 
 namespace MMClipboard.Tool.AppUpdate;
@@ -43,12 +46,21 @@ public abstract class AppUpdateManager
 
     private static void GetVersionInfo(Action<VersionModel> action)
     {
-        
+        var url = UserConfig.Default.config.updatePlace == 0
+            ? "https://raw.githubusercontent.com/ProjectLion/MMClipboard/main/VersionInfo.json"
+            : "https://gitee.com/HtReturnTrue/MMClipboard/raw/main/VersionInfo.json";
+        NetHelper.GetResponse(url, (data) =>
+        {
+            action?.Invoke(JsonConvert.DeserializeObject<VersionModel>(data));
+        }, (err) =>
+        {
+            err.Log();
+        });
     }
 
     public static string ReadLocalVersionNo()
     {
         var version = Application.ResourceAssembly.GetName().Version;
-        return version is null ? "1.0.0" : version.ToString(4);
+        return version is null ? "1.0.0.0" : version.ToString(4);
     }
 }

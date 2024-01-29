@@ -17,7 +17,7 @@
         xmlns:viewmodel="clr-namespace:MMClipboard.ViewModel"
         Title="设置"
         Width="400"
-        Height="550"
+        Height="590"
         d:DataContext="{d:DesignInstance Type=viewmodel:SettingViewModel}"
         AllowsTransparency="True"
         Background="Transparent"
@@ -124,7 +124,7 @@
             </Border>
             <ScrollViewer Background="Transparent"
                           Margin="0,30,0,105"
-                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Hidden"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel VerticalAlignment="Center"
                             Orientation="Vertical">
@@ -175,29 +175,6 @@
                                      Style="{StaticResource UIToolTip_Normal}" />
                         </Border.ToolTip>
                     </Border>
-                    <!--  备份文件  -->
-                    <!-- <Border Margin="15,5,15,5" -->
-                    <!--         Style="{StaticResource CellStyle}"> -->
-                    <!--     <Grid> -->
-                    <!--         <TextBlock Margin="15,0,0,0" -->
-                    <!--                    HorizontalAlignment="Left" -->
-                    <!--                    VerticalAlignment="Center" -->
-                    <!--                    FontFamily="{StaticResource JetBrains Mono Regular}" -->
-                    <!--                    FontSize="14" -->
-                    <!--                    Foreground="White" -->
-                    <!--                    Text="备份文件" /> -->
-                    <!--         <ht:UIToggleButton Margin="0,0,10,0" -->
-                    <!--                            HorizontalAlignment="Right" -->
-                    <!--                            IsChecked="{Binding isCopyFile, FallbackValue=true}" -->
-                    <!--                            OffText="不了" -->
-                    <!--                            OnText="备份" -->
-                    <!--                            Style="{StaticResource Ht_DefaultToggleButton}" /> -->
-                    <!--     </Grid> -->
-                    <!--     <Border.ToolTip> -->
-                    <!--         <ToolTip Content="在监听到复制文件内容时。&#x0A;将文件备份到程序目录。&#x0A;在删除记录时如果是备份的文件会一同删除。" -->
-                    <!--                  Style="{StaticResource UIToolTip_Normal}" /> -->
-                    <!--     </Border.ToolTip> -->
-                    <!-- </Border> -->
                     <!--  是否开启小窗口模式  -->
                     <Border Margin="15,5,15,5"
                             Style="{StaticResource CellStyle}">
@@ -298,7 +275,7 @@
                     <!--  选择背景色  -->
                     <Border Margin="15,5,15,5"
                             Cursor="Hand"
-                            MouseLeftButtonUp="chooseBGColorBorder_MouseLeftButtonUp"
+                            MouseLeftButtonUp="ChooseBGColorAction"
                             Style="{StaticResource CellStyle}"
                             Visibility="{Binding ElementName=isUseBGImgToggle, Path=IsChecked, Converter={StaticResource chooseBGColorVisibilityConverter}, FallbackValue=Visible}">
                         <Grid>
@@ -321,8 +298,6 @@
                     </Border>
                     <!--  录制快捷键  -->
                     <Border Margin="15,5,15,5"
-                            Cursor="Hand"
-                            MouseLeftButtonUp="ShortcutKeyRecordAction"
                             Style="{StaticResource CellStyle}">
                         <Grid>
                             <TextBlock Margin="15,0,0,0"
@@ -337,8 +312,10 @@
                                     Margin="0,0,10,0"
                                     HorizontalAlignment="Right"
                                     BorderBrush="{StaticResource HeaderColor}"
-                                    BorderThickness="0.6"
-                                    CornerRadius="5">
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Cursor="Hand"
+                                    MouseLeftButtonUp="ShortcutKeyRecordAction">
                                 <StackPanel Margin="8,0,8,0"
                                             VerticalAlignment="Center">
                                     <TextBlock x:Name="shortcutKeyText"
@@ -354,18 +331,59 @@
                                      Style="{StaticResource UIToolTip_Normal}" />
                         </Border.ToolTip>
                     </Border>
+                    <!-- 选择更新渠道 -->
+                    <Border Margin="15,5,15,5"
+                            Style="{StaticResource CellStyle}">
+                        <Grid>
+                            <TextBlock Margin="15,0,0,0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource JetBrains Mono Regular}"
+                                       FontSize="14"
+                                       Foreground="White"
+                                       Text="选择更新渠道" />
+                            <Border Height="25"
+                                    MaxWidth="200"
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Right"
+                                    BorderBrush="{StaticResource HeaderColor}"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Cursor="Hand"
+                                    Background="Transparent"
+                                    MouseLeftButtonUp="ChooseUpdatePlaceAction">
+                                <StackPanel x:Name="updatePlacePanel"
+                                            Margin="8,0,8,0"
+                                            Orientation="Horizontal"
+                                            VerticalAlignment="Center">
+                                    <TextBlock x:Name="updatePlaceText"
+                                               FontFamily="{StaticResource JetBrains Mono Regular}"
+                                               FontSize="12"
+                                               Foreground="White"
+                                               Text="GitHub" />
+                                    <Image Margin="10 0 0 0"
+                                           Source="../Images/close.png"
+                                           Width="10"
+                                           Height="10" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                        <Border.ToolTip>
+                            <ToolTip Content="切换更新渠道。&#x0A;默认GitHub。"
+                                     Style="{StaticResource UIToolTip_Normal}" />
+                        </Border.ToolTip>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
             <!-- App版本更新检测 -->
-            <ht:UIButton Width="250"
-                         Height="40"
-                         Margin="0,0,0,58"
+            <ht:UIButton Height="40"
+                         Margin="15,0,15,58"
                          Background="{StaticResource 筛选按钮.All}"
                          PreviewMouseLeftButtonDown="CheckUpdateBtnAction"
                          Style="{StaticResource UIButton_Title}"
                          borderColor="White"
                          borderWidth="0"
-                         Visibility="Hidden"
+                         Visibility="Visible"
                          VerticalAlignment="Bottom"
                          font="{StaticResource JetBrains Mono Regular}"
                          fontSize="16"
@@ -400,6 +418,47 @@
                         CornerRadius="9">
                     <materialDesign:ColorPicker ClipToBounds="True"
                                                 Color="{Binding selectColor}" />
+                </Border>
+            </Popup>
+
+            <!-- 更新渠道选择 -->
+            <Popup x:Name="updatePlacePopup"
+                   AllowsTransparency="True"
+                   PlacementTarget="{Binding ElementName=updatePlacePanel}"
+                   PopupAnimation="Slide"
+                   StaysOpen="False"
+                   VerticalOffset="10"
+                   HorizontalOffset="-10">
+                <Border Background="{StaticResource 主背景色}"
+                        CornerRadius="5">
+                    <StackPanel Margin="10"
+                                Orientation="Vertical">
+                        <ht:UIButton Width="100"
+                                     Background="{StaticResource 筛选按钮.All}"
+                                     PreviewMouseLeftButtonDown="SelectUpdatePlaceAction"
+                                     Style="{StaticResource UIButton_Title}"
+                                     borderColor="White"
+                                     borderWidth="0"
+                                     Visibility="Visible"
+                                     VerticalAlignment="Top"
+                                     font="{StaticResource JetBrains Mono Regular}"
+                                     fontSize="14"
+                                     title="GitHub"
+                                     toolTip="GitHub" />
+                        <ht:UIButton Width="100"
+                                     Margin="0,10,0,0"
+                                     Background="{StaticResource 筛选按钮.All}"
+                                     PreviewMouseLeftButtonDown="SelectUpdatePlaceAction"
+                                     Style="{StaticResource UIButton_Title}"
+                                     borderColor="White"
+                                     borderWidth="0"
+                                     Visibility="Visible"
+                                     VerticalAlignment="Top"
+                                     font="{StaticResource JetBrains Mono Regular}"
+                                     fontSize="14"
+                                     title="Gitee"
+                                     toolTip="Gitee" />
+                    </StackPanel>
                 </Border>
             </Popup>
         </Grid>

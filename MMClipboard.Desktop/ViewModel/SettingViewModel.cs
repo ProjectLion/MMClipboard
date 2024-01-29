@@ -187,6 +187,7 @@ public class SettingViewModel : ObservableObject
         shortcutText.Append($"{m}+");
         shortcutText.Append(UserConfig.Default.config.key.ToString());
         hotkeyString = shortcutText.ToString();
+        CheckUpdate();
     }
 
     /// <summary>
@@ -226,13 +227,13 @@ public class SettingViewModel : ObservableObject
     /// App检查更新
     /// The App checks for updates
     /// </summary>
-    private void CheckUpdate()
+    public void CheckUpdate()
     {
         AppUpdateManager.Check((update, mod) =>
         {
             m_versionDataModel = mod;
             m_isNeedUpdate = update;
-            updateBtnTitle = update ? $"有新版本：{mod.version}" : "检查更新";
+            updateBtnTitle = update ? $"有新版本：{mod.version}" : $"不需要更新：{mod.version}";
         });
     }
 

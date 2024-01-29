@@ -100,7 +100,7 @@ public partial class App
         if (!File.Exists(path)) return;
         var info = new ProcessStartInfo(path)
         {
-            Arguments = $"com.ht.mmclipboard"
+            Arguments = "com.ht.mmclipboard"
         };
         Process.Start(info);
     }

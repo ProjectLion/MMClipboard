@@ -28,6 +28,7 @@ public partial class AppUpdateWindow : Window
 
     private void CloseBtnClick(object sender, RoutedEventArgs e)
     {
+        (DataContext as AppUpdateViewModel)?.Cancel();
         Close();
     }
 

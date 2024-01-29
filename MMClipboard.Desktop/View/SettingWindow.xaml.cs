@@ -12,6 +12,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using HtKit;
+using HtUIKit;
 using MMClipboard.UserConfigs;
 using MMClipboard.ViewModel;
 
@@ -28,6 +29,7 @@ public partial class SettingWindow
         InitializeComponent();
         DataContext = new SettingViewModel();
         SharedInstance.Instance.settingWindow = this;
+        updatePlaceText.Text = UserConfig.Default.config.updatePlace == 0 ? "GitHub" : "Gitee";
     }
 
     protected override void OnClosed(EventArgs e)
@@ -82,7 +84,7 @@ public partial class SettingWindow
     /// 选择背景颜色
     /// Select a background color
     /// </summary>
-    private void chooseBGColorBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    private void ChooseBGColorAction(object sender, MouseButtonEventArgs e)
     {
         colorPopup.IsOpen = true;
         e.Handled = true;
@@ -158,5 +160,42 @@ public partial class SettingWindow
     private void CheckUpdateBtnAction(object sender, MouseButtonEventArgs e)
     {
         (DataContext as SettingViewModel)?.Update();
+    }
+
+    /// <summary>
+    /// 切换更新渠道
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ChooseUpdatePlaceAction(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount != 1)
+            return;
+        e.Handled = true;
+        updatePlacePopup.IsOpen = true;
+    }
+
+    /// <summary>
+    /// 切换更新渠道
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void SelectUpdatePlaceAction(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount != 1)
+            return;
+        e.Handled = true;
+        if (sender is not UIButton btn)
+            return;
+        UserConfig.Default.config.updatePlace = btn.title switch
+        {
+            "GitHub" => 0,
+            "Gitee" => 1,
+            _ => UserConfig.Default.config.updatePlace
+        };
+        updatePlaceText.Text = btn.title;
+        UserConfig.SaveConfig();
+        updatePlacePopup.IsOpen = false;
+        (DataContext as SettingViewModel)?.CheckUpdate();
     }
 }

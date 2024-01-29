@@ -13,7 +13,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 
 namespace HtKit;
@@ -87,25 +86,36 @@ public class DownloadService
     /// <returns></returns>
     private async Task Download()
     {
+        // 已下载的文件大小
+        long downloadedSize = 0;
+        // 当前从服务器接受的大小
+        long currentReadSize = 0;
+
+        var fileExtension = Path.GetExtension(m_savePath);
+
+        var tempFilePath = m_savePath.Replace(fileExtension, ".temp");
+
         try
         {
             oneSecondReadBytes = 0;
             instantSpeed = 0;
-            long downloadedSize = 0;
             stopwatch = null;
-            using var response = await httpClient.GetAsync(m_downloadUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+            // 创建HttpRequestMessage对象
+            var request = new HttpRequestMessage(HttpMethod.Get, m_downloadUrl);
+
+            using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cts.Token);
             response.EnsureSuccessStatusCode();
             // 文件总大小
             totalFileSize = response.Content.Headers.ContentLength ?? 0;
-            // 读取文件
+
+            // 读取数据流
             await using var contentStream = await response.Content.ReadAsStreamAsync();
-            await using var fileStream = new FileStream(m_savePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, m_config.BufferBlockSize, true);
+            await using var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite,
+                m_config.BufferBlockSize,
+                true);
 
             // 开始下载回调
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                downloadStarted?.Invoke(new DownloadStartedEventArgs() { fileName = m_savePath, fileSize = totalFileSize });
-            });
+            downloadStarted?.Invoke(new DownloadStartedEventArgs() { fileName = m_savePath, fileSize = totalFileSize });
 
             var buffer = new byte[m_config.BufferBlockSize];
             int bytesRead;
@@ -113,25 +123,37 @@ public class DownloadService
             stopwatch = Stopwatch.StartNew();
             while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
             {
-                // Check for cancellation
                 cts.Token.ThrowIfCancellationRequested();
                 await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
                 oneSecondReadBytes += bytesRead;
                 downloadedSize += bytesRead;
-                UpdateProgressAndSpeed(downloadedSize, downloadedSize, startTime);
+                currentReadSize += bytesRead;
+                UpdateProgressAndSpeed(downloadedSize, currentReadSize, startTime);
             }
             stopwatch?.Stop();
             fileStream.Close();
-
-            Application.Current.Dispatcher.Invoke(() =>
+            // 下载完成修改文件名
+            try
             {
+                File.Move(tempFilePath, m_savePath);
                 downloadCompleted?.Invoke();
-            });
+            }
+            catch (Exception e)
+            {
+                e.Message.Debug();
+                if (File.Exists(m_savePath))
+                    File.Delete(m_savePath);
+                if (File.Exists(tempFilePath))
+                    File.Delete(tempFilePath);
+                downloadFailed?.Invoke(new DownloadFailedEventArgs() { error = e.Message });
+            }
         }
         catch (Exception ex)
         {
             if (File.Exists(m_savePath))
                 File.Delete(m_savePath);
+            if (File.Exists(tempFilePath))
+                File.Delete(tempFilePath);
             downloadFailed?.Invoke(new DownloadFailedEventArgs() { error = ex is OperationCanceledException ? "" : ex.Message });
         }
     }

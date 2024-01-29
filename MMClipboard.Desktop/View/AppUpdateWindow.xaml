@@ -92,8 +92,7 @@
                            TextWrapping="Wrap" />
                 <TextBlock Margin="30,0,30,70"
                            VerticalAlignment="Bottom"
-                           FontFamily="{StaticResource JetBrains Mono Regular}"
-                           FontSize="18"
+                           FontSize="16"
                            Foreground="White"
                            Text="是否下载更新？"
                            TextAlignment="Center" />
@@ -108,8 +107,7 @@
                                  Click="UpdateBtnClick"
                                  Style="{StaticResource UIButton_Title}"
                                  borderWidth="1"
-                                 font="{StaticResource JetBrains Mono Regular}"
-                                 fontSize="16"
+                                 fontSize="14"
                                  title="下载">
                         <ht:UIButton.borderColor>
                             <LinearGradientBrush StartPoint="0,1"
@@ -127,8 +125,7 @@
                                  Click="CloseBtnClick"
                                  Style="{StaticResource UIButton_Title}"
                                  borderWidth="1"
-                                 font="{StaticResource JetBrains Mono Regular}"
-                                 fontSize="16"
+                                 fontSize="14"
                                  title="取消">
                         <ht:UIButton.borderColor>
                             <LinearGradientBrush StartPoint="0,1"

@@ -19,7 +19,6 @@ public class Config
     /// <summary>
     /// 开机启动 默认true
     /// </summary>
-
     public bool isAutoStart { get; set; } = true;
 
     /// <summary>
@@ -67,6 +66,14 @@ public class Config
 
     public Key key { get; set; } = Key.C;
 
+    /// <summary>
+    /// 更新渠道。0：GitHub 1：Gitee。默认为GitHub
+    /// </summary>
+    public int updatePlace { get; set; } = 0;
+
+    /// <summary>
+    /// 背景图
+    /// </summary>
     public BitmapImage bgImgSource
     {
         get
