@@ -93,13 +93,11 @@
                                     <TextBlock Margin="0,0,5,0"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               FontFamily="{StaticResource JetBrains Mono Regular}"
                                                FontSize="16"
                                                Foreground="White"
-                                               Text="来自 : " />
+                                               Text="来自：" />
                                     <TextBlock HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               FontFamily="{StaticResource JetBrains Mono Regular}"
                                                FontSize="16"
                                                Foreground="White"
                                                Text="{Binding from}" />
