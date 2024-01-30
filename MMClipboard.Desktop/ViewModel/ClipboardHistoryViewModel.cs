@@ -345,7 +345,7 @@ public class ClipboardHistoryViewModel : ObservableObject
         m_window.Close();
         try
         {
-            Process.Start("explorer.exe", path);
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {path}") { CreateNoWindow = true });
         }
         catch (Exception e)
         {
