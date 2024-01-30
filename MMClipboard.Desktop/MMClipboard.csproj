@@ -13,9 +13,9 @@
         <AssemblyName>MMClipboard</AssemblyName>
         <ApplicationIcon>Images\Logo.ico</ApplicationIcon>
         <NeutralLanguage>zh-CN</NeutralLanguage>
-        <AssemblyVersion>1.24.130.1</AssemblyVersion>
-        <FileVersion>1.24.130.1</FileVersion>
-        <Version>1.24.130.1</Version>
+        <AssemblyVersion>1.24.130.2</AssemblyVersion>
+        <FileVersion>1.24.130.2</FileVersion>
+        <Version>1.24.130.2</Version>
         <Copyright>© 2024 Ht. All rights reserved.</Copyright>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <SignAssembly>False</SignAssembly>
