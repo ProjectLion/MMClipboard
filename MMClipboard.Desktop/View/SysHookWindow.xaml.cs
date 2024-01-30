@@ -11,13 +11,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using MMClipboard.Model;
 using MMClipboard.Tool;
 using MMClipboard.UserConfigs;
 using static HtKit.Win32Api;
+using Clipboard = System.Windows.Clipboard;
+using TextDataFormat = System.Windows.TextDataFormat;
 
 
 namespace MMClipboard.View;
@@ -41,7 +42,7 @@ public partial class SysHookWindow
         SharedInstance.Instance.registerHotKeyAction = (m, k) =>
         {
             UnregisterHotKey(selfHandle, AltCKeyEventId);
-            RegistHot(m, k);
+            RegisterHot(m, k);
         };
     }
 
@@ -53,49 +54,49 @@ public partial class SysHookWindow
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
+    // 将窗口添加到剪贴板格式侦听器列表.
+    // 微软文档：每当剪贴板的内容发生更改时，该窗口将发布 WM_CLIPBOARDUPDATE: 0x031D 消息。
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
+    private static extern bool AddClipboardFormatListener(IntPtr hWnd);
 
+    // 从系统维护的剪贴板格式侦听器列表中删除给定窗口。
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern bool ChangeClipboardChain(IntPtr HWnd, IntPtr HWndNext);
+    private static extern bool RemoveClipboardFormatListener(IntPtr hWnd);
 
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
         selfHandle = new WindowInteropHelper(this).Handle;
         var source = HwndSource.FromHwnd(selfHandle);
-        m_HWndNext = SetClipboardViewer(selfHandle);
+        if (AddClipboardFormatListener(selfHandle))
+            "剪切板监听成功".Log();
+
         source?.AddHook(HwndHook);
         //真正注册快捷键监听处理: 同时注册数字键和小键盘的CTRL+5
         //RegisterHotKey(handle, Ctrl5KeyEventId, (uint)ModifierKeys.Control, (uint)KeyInterop.VirtualKeyFromKey(Key.D5));
         //RegisterHotKey(handle, Ctrl5KeyEventId, (uint)ModifierKeys.Control, (uint)KeyInterop.VirtualKeyFromKey(Key.NumPad5));
-        RegistHot(UserConfig.Default.config.modifierKeys, UserConfig.Default.config.key);
+        RegisterHot(UserConfig.Default.config.modifierKeys, UserConfig.Default.config.key);
     }
 
-    private void RegistHot(ModifierKeys modifierKeys, Key key)
+    // 注册快捷键
+    private void RegisterHot(ModifierKeys modifierKeys, Key key)
     {
         var m = (int)modifierKeys;
         RegisterHotKey(selfHandle, AltCKeyEventId, m, KeyInterop.VirtualKeyFromKey(key));
     }
 
+    // 窗口消息处理
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         const int WM_Hotkey = 0x0312;
-        const int WM_DRAWCLIPBOARD = 0x0308;
-        const int WM_CHANGECBCHAIN = 0x030D;
+        const int WM_CLIPBOARDUPDATE = 0x031D;
         const int InstanceMsg = 0x9823;
         switch (msg)
         {
-            case WM_DRAWCLIPBOARD: // 剪切板内容变化
-            {
+            case WM_CLIPBOARDUPDATE:
+                // 剪切板内容变化，微软文档中说，这个消息在剪切板内容变化时发送
                 ClipboardContentChanged();
                 break;
-            }
-            case WM_CHANGECBCHAIN: // 剪切板监听被注销
-            {
-                ClipboardListenCancel(wParam, lParam, msg);
-                break;
-            }
             case WM_Hotkey: // 通过RegisterHotKey注册的热键
             {
                 HotkeyAction(wParam);
@@ -129,6 +130,7 @@ public partial class SysHookWindow
     {
         if (SharedInstance.Instance.isCopyFromSelf)
             return;
+        SharedInstance.Instance.isCopyFromSelf = false;
         try
         {
             var hWnd = GetForegroundWindow(); //获取活动窗口句柄
@@ -209,13 +211,10 @@ public partial class SysHookWindow
                     dataArr.Add(mod);
                 }
             }
-
             // 复制的内容是重复的就return
             if (clipContent == oldClipContent || dataArr.Count == 0)
                 return;
             oldClipContent = clipContent;
-
-            SharedInstance.Instance.isCopyFromSelf = false;
             if (DataBaseController.AddDataFromList(dataArr))
                 SharedInstance.Instance.reloadDataAction?.Invoke();
         }
@@ -225,20 +224,9 @@ public partial class SysHookWindow
         }
     }
 
-    // 剪切板监听被注销
-    private void ClipboardListenCancel(IntPtr wParam, IntPtr lParam, int msg)
-    {
-        if (wParam == m_HWndNext)
-            m_HWndNext = lParam;
-        else if (m_HWndNext != 0)
-            SendMessage(m_HWndNext, msg, wParam, lParam);
-    }
-
     private void Window_Closed(object sender, EventArgs e)
     {
-        var handle = new WindowInteropHelper(this).Handle;
-        //关闭窗口后取消注册
-        UnregisterHotKey(handle, AltCKeyEventId);
-        ChangeClipboardChain(handle, m_HWndNext);
+        if (RemoveClipboardFormatListener(selfHandle))
+            "剪切板取消监听成功".Log();
     }
 }
