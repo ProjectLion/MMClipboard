@@ -98,14 +98,14 @@ public class ClipItemModel : ObservableObject
         get => _exeIcon;
         private set => SetProperty(ref _exeIcon, value);
     }
-    private BitmapSource _exeIcon = new BitmapImage(new Uri("/Images/Exe.png", UriKind.Relative));
+    private BitmapSource _exeIcon;
 
     public BitmapSource fileIcon
     {
         get => _fileIcon;
         private set => SetProperty(ref _fileIcon, value);
     }
-    private BitmapSource _fileIcon = new BitmapImage(new Uri("/Images/FileDefaultLogo", UriKind.Relative));
+    private BitmapSource _fileIcon;
 
     [Column(IsIgnore = true)] public string dateStr { get; private set; }
 
@@ -147,6 +147,7 @@ public class ClipItemModel : ObservableObject
     /// </summary>
     private void LoadImageAsync()
     {
+        LoadIconAsync();
         // 类型不是图片且图片已加载 直接return
         if (clipType is not ClipType.Image || _image is not null)
             return;
@@ -165,10 +166,11 @@ public class ClipItemModel : ObservableObject
     {
         // LoadImageAsync();
         // 加载程序图标
-        LoadExeIcon(fromExeImgPath, source => exeIcon = source);
+        if (exeIcon == null)
+            LoadExeIcon(fromExeImgPath, source => exeIcon = source);
 
         // 加载文件图标
-        if (clipType is ClipType.File)
+        if (clipType is ClipType.File && fileIcon == null)
             LoadFileIcon(content, source => fileIcon = source);
     }
 
@@ -179,6 +181,11 @@ public class ClipItemModel : ObservableObject
     /// <param name="ac"></param>
     private static void LoadExeIcon(string p, Action<BitmapSource> ac)
     {
+        if (string.IsNullOrEmpty(p))
+        {
+            ac?.Invoke(new BitmapImage(new Uri("/Images/Exe.png", UriKind.Relative)));
+            return;
+        }
         Application.Current.Dispatcher.InvokeAsync(() =>
         {
             try
@@ -211,7 +218,11 @@ public class ClipItemModel : ObservableObject
         {
             const string name = "pack://application:,,,/Images/FileDefaultLogo.png";
             var bitmapImage = new BitmapImage(new Uri(name, UriKind.Absolute));
-
+            if (string.IsNullOrEmpty(p))
+            {
+                ac?.Invoke(bitmapImage);
+                return;
+            }
             // 是文件夹
             if (Directory.Exists(p))
             {

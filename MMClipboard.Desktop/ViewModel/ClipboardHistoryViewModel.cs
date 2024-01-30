@@ -240,11 +240,6 @@ public class ClipboardHistoryViewModel : ObservableObject
     {
         selectDate = date;
         m_dataSource = date == DateTime.MinValue ? DataBaseController.GetAllData() : DataBaseController.GetDataWithDate(date);
-        // 每次根据日期筛选完数据源都预加载一下数据。
-        m_dataSource.ForEach(a =>
-        {
-            a.LoadIconAsync();
-        });
         FilterData();
     }
 
