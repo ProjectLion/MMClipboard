@@ -18,6 +18,26 @@ using HtKit;
 
 namespace MMClipboard.Tool.BindingConverter;
 
+#region 文本类型的文字裁剪，优化TextBlock的显示性能，多余的字没必要显示
+
+public class HistoryItemTextLengthConverter : IValueConverter
+{
+    object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var tep = value?.ToString();
+        if (tep is null)
+            return "";
+        return tep.Length > 1000 ? tep[..999] : tep;
+    }
+
+    object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+#endregion 根据类型的不同切换背景色
+
 #region 根据类型的不同切换背景色
 
 public class HistoryItemBackgroundColorConverter : IValueConverter

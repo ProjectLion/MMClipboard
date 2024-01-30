@@ -34,6 +34,7 @@
         <convert:HistoryItemFileNameConverter x:Key="historyItemFileNameConverter" />
         <convert:HistoryItemCollectStateConverter x:Key="historyItemCollectStateConverter" />
         <convert:HistoryItemCollectStateBgColorConverter x:Key="historyItemCollectStateBgColorConverter" />
+        <convert:HistoryItemTextLengthConverter x:Key="historyItemTextLengthConverter" />
         <!--  历史记录 item style  -->
         <Style x:Key="HistoryItemStyle"
                TargetType="ListBoxItem">
@@ -142,7 +143,7 @@
                                                  IsEnabled="False"
                                                  ClipToBounds="True"
                                                  SnapsToDevicePixels="True"
-                                                 Text="{Binding content}"
+                                                 Text="{Binding content, Converter={StaticResource historyItemTextLengthConverter}}"
                                                  TextOptions.TextFormattingMode="Display"
                                                  TextOptions.TextRenderingMode="ClearType"
                                                  TextTrimming="CharacterEllipsis"
