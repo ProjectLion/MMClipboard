@@ -17,14 +17,20 @@ using MMClipboard.View;
 
 namespace MMClipboard;
 
+public delegate void WindowBackgroundColorChangeDelegate(SolidColorBrush color);
+
+public delegate void WindowBackgroundImgChangeDelegate(BitmapSource img);
+
+public delegate void WindowBackgroundChangeDelegate(bool use);
+
 public sealed class SharedInstance
 {
     private static volatile SharedInstance instance;
     private static readonly object lockObj = new();
-    public Action<bool> backgroundChangeAction;
 
-    public Action<SolidColorBrush> backgroundColorChangeAction;
-    public Action<BitmapSource> backgroundImageChangeAction;
+    public WindowBackgroundChangeDelegate backgroundChangeDelegate;
+    public WindowBackgroundColorChangeDelegate backgroundColorChangeDelegate;
+    public WindowBackgroundImgChangeDelegate backgroundImageChangeDelegate;
 
     /// <summary>
     /// 是否是自身复制的

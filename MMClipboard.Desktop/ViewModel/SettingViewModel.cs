@@ -96,7 +96,7 @@ public class SettingViewModel : ObservableObject
         set
         {
             UserConfig.Default.config.isUseBackgroundImg = value;
-            SharedInstance.Instance.backgroundChangeAction?.Invoke(value);
+            SharedInstance.Instance.backgroundChangeDelegate?.Invoke(value);
             backgroundImgVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             UserConfig.SaveConfig();
             SetProperty(ref _isUseBackgroundImg, value);
@@ -124,7 +124,7 @@ public class SettingViewModel : ObservableObject
         set
         {
             solidColorBrush = new SolidColorBrush(value);
-            SharedInstance.Instance.backgroundColorChangeAction?.Invoke(solidColorBrush);
+            SharedInstance.Instance.backgroundColorChangeDelegate?.Invoke(solidColorBrush);
             UserConfig.Default.config.pageBackgroundColor = value.ToString();
             UserConfig.SaveConfig();
             SetProperty(ref _selectColor, value);
@@ -201,7 +201,7 @@ public class SettingViewModel : ObservableObject
         {
             var bmp = new BitmapImage(new Uri(fileP));
             backgroundImg = bmp;
-            SharedInstance.Instance.backgroundImageChangeAction?.Invoke(backgroundImg);
+            SharedInstance.Instance.backgroundImageChangeDelegate?.Invoke(backgroundImg);
             UserConfig.Default.config.pageBackgroundImg = fileP;
             UserConfig.SaveConfig();
         }
