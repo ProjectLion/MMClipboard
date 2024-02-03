@@ -27,7 +27,7 @@ public class HistoryItemTextLengthConverter : IValueConverter
         var tep = value?.ToString();
         if (tep is null)
             return "";
-        return tep.Length > 1000 ? tep[..999] : tep;
+        return tep.Length > 300 ? tep[..299] : tep;
     }
 
     object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
