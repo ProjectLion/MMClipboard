@@ -28,7 +28,9 @@
         WindowStyle="None"
         mc:Ignorable="d">
     <Grid Background="#00000000">
-        <Grid Height="500" Margin="15,0,15,15" VerticalAlignment="Bottom">
+        <Grid Height="400"
+              Margin="15,0,15,15"
+              VerticalAlignment="Bottom">
             <ContentControl Content="{Binding currentView}" />
         </Grid>
     </Grid>

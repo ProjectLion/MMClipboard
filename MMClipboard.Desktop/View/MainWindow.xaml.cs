@@ -7,7 +7,6 @@
 
 
 using System;
-using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using HtKit;
 using MMClipboard.ViewModel;
@@ -26,10 +25,6 @@ public partial class MainWindow
         DataContext = new MainViewModel(this);
     }
 
-    // Win32 API declarations
-    private const int GWL_EXSTYLE = -20;
-    private const int WS_EX_TOOLWINDOW = 0x80;
-
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
@@ -37,22 +32,12 @@ public partial class MainWindow
         const int WS_CHILD = 0x40000000;
         // Get this window's handle
         var hWnd = new WindowInteropHelper(this).Handle;
-
-        // Get the extended window style
-        var exStyle = (int)GetWindowLong(hWnd, GWL_EXSTYLE);
-
-        // Set the WS_EX_TOOLWINDOW style
-        exStyle |= WS_EX_TOOLWINDOW;
+        var exStyle = Win32Api.GetWindowLong(hWnd, Win32Api.GWL_EXSTYLE);
+        exStyle |= 128;
         exStyle |= WS_CHILD;
         exStyle |= WS_EX_NOACTIVATE;
-        SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+        Win32Api.SetWindowLong(hWnd, Win32Api.GWL_EXSTYLE, exStyle);
     }
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
     protected override void OnClosed(EventArgs e)
     {

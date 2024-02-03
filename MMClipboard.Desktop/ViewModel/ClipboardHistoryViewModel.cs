@@ -16,10 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using HtKit;
 using MMClipboard.Model;
 using MMClipboard.Tool;
 using MMClipboard.UserConfigs;
@@ -29,7 +26,7 @@ using TextDataFormat = System.Windows.TextDataFormat;
 
 namespace MMClipboard.ViewModel;
 
-public class ClipboardHistoryViewModel : ObservableObject
+public class ClipboardHistoryViewModel : ObservableObject, IDisposable
 {
     public List<ClipItemModel> clips
     {
@@ -60,7 +57,7 @@ public class ClipboardHistoryViewModel : ObservableObject
             else if (value == DateTime.Today.AddDays(-3))
                 selectDateStr = "大前天";
             else
-                selectDateStr = value.ToString("yyyy-MM-dd");
+                selectDateStr = value.ToString("MM月dd日");
             SetProperty(ref _selectDate, value);
         }
     }
@@ -73,29 +70,7 @@ public class ClipboardHistoryViewModel : ObservableObject
     }
     private string _selectDateStr;
 
-    public Visibility BackgroundImgVisibility
-    {
-        get => _BackgroundImgVisibility;
-        set => SetProperty(ref _BackgroundImgVisibility, value);
-    }
-    private Visibility _BackgroundImgVisibility = UserConfig.Default.config.isUseBackgroundImg ? Visibility.Visible : Visibility.Collapsed;
-
-    public BitmapSource backgroundImg
-    {
-        get => _backgroundImg;
-        private set => SetProperty(ref _backgroundImg, value);
-    }
-    private BitmapSource _backgroundImg = UserConfig.Default.config.bgImgSource;
-
-    /// <summary>
-    /// 页面背景色
-    /// </summary>
-    public SolidColorBrush bgColor
-    {
-        get => _bgColor;
-        private set => SetProperty(ref _bgColor, value);
-    }
-    private SolidColorBrush _bgColor = HtColor.GetBrushWithString(UserConfig.Default.config.pageBackgroundColor);
+    public WindowBackgroundModel backgroundModel { get; } = new();
 
     private ClipType m_filter = ClipType.All;
 
@@ -116,19 +91,6 @@ public class ClipboardHistoryViewModel : ObservableObject
         m_window = window;
         // 这里设置时间后会触发日历的SelectedChanged事件
         selectDate = DateTime.Today;
-
-        SharedInstance.Instance.backgroundColorChangeAction = (color) =>
-        {
-            bgColor = color;
-        };
-        SharedInstance.Instance.backgroundChangeAction = (use) =>
-        {
-            BackgroundImgVisibility = use ? Visibility.Visible : Visibility.Collapsed;
-        };
-        SharedInstance.Instance.backgroundImageChangeAction = (img) =>
-        {
-            backgroundImg = img;
-        };
     }
 
     /// <summary>
@@ -182,7 +144,7 @@ public class ClipboardHistoryViewModel : ObservableObject
     /// 复制文件到剪贴板
     /// </summary>
     /// <param name="path"></param>
-    public void CopyFile(string path)
+    private void CopyFile(string path)
     {
         Clipboard.Clear();
         Clipboard.Flush();
@@ -204,22 +166,15 @@ public class ClipboardHistoryViewModel : ObservableObject
     /// <summary>
     /// 粘贴到其他应用
     /// </summary>
-    private void PasteToOtherApps()
+    private async void PasteToOtherApps()
     {
-        if (UserConfig.Default.config.isCopiedClose)
-            m_window.Close();
-        var targetHwnd = Win32Api.GetForegroundWindow();
-        var targetThreadID = Win32Api.GetWindowThreadProcessId(targetHwnd, out _);
-        var curtThreadID = Win32Api.GetCurrentThreadId();
-        Win32Api.AttachThreadInput(curtThreadID, targetThreadID, true);
-        Win32Api.SetForegroundWindow(targetHwnd);
-
-        Task.Run(() =>
+        await Task.Run(() =>
         {
             SendKeys.SendWait("^v");
         });
+        if (UserConfig.Default.config.isCopiedClose)
+            m_window.Close();
         SharedInstance.Instance.isCopyFromSelf = false;
-        Win32Api.AttachThreadInput(curtThreadID, targetThreadID, false);
     }
 
     /// <summary>
@@ -390,4 +345,9 @@ public class ClipboardHistoryViewModel : ObservableObject
     }
 
     #endregion
+
+    public void Dispose()
+    {
+        backgroundModel.Dispose();
+    }
 }

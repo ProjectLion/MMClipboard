@@ -7,7 +7,6 @@
 
 
 using System;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -101,25 +100,19 @@ public partial class SmallWindow
         Top = top;
     }
 
-    private const int GWL_EXSTYLE = -20;
-    private const int WS_EX_TOOLWINDOW = 0x80;
-
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
         const int WS_EX_NOACTIVE = 0x08000000;
         const int WS_CHILD = 0x40000000;
-        // Get this window's handle
+
         var hWnd = new WindowInteropHelper(this).Handle;
 
-        // Get the extended window style
-        var exStyle = (int)GetWindowLong(hWnd, GWL_EXSTYLE);
-
-        // Set the WS_EX_TOOLWINDOW style
-        exStyle |= WS_EX_TOOLWINDOW;
+        var exStyle = Win32Api.GetWindowLong(hWnd, Win32Api.GWL_EXSTYLE);
+        exStyle |= 128;
         exStyle |= WS_CHILD;
         exStyle |= WS_EX_NOACTIVE;
-        SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+        Win32Api.SetWindowLong(hWnd, Win32Api.GWL_EXSTYLE, exStyle);
     }
 
     /// <summary>
@@ -136,6 +129,7 @@ public partial class SmallWindow
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);
+        viewModel?.Dispose();
         DataContext = null;
         SharedInstance.Instance.mainWindow = null;
         SharedInstance.Instance.reloadDataAction = null;
@@ -185,10 +179,10 @@ public partial class SmallWindow
     }
 
     /// <summary>
-    /// cell左键点击
-    /// Cell mouseLeft click.
+    /// Item选中事件
+    /// Item selected event
     /// </summary>
-    private void SelectedItemEvent(object sender, MouseButtonEventArgs e)
+    private void HistoryListItemSelected(object sender, MouseButtonEventArgs e)
     {
         if (e.ClickCount != 1) return;
         var listBoxItem = FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource);
@@ -256,18 +250,18 @@ public partial class SmallWindow
         olbSelectTypeBtn.borderWidth = new Thickness(0);
         btn.borderWidth = new Thickness(1);
         olbSelectTypeBtn = btn;
-        switch (btn.Name)
+        switch (btn.Tag)
         {
-            case "allBtn":
+            case "all":
                 viewModel?.FilterDataWithType(ClipType.All);
                 break;
-            case "stringBtn":
+            case "string":
                 viewModel?.FilterDataWithType(ClipType.Text);
                 break;
-            case "imageBtn":
+            case "image":
                 viewModel?.FilterDataWithType(ClipType.Image);
                 break;
-            case "fileBtn":
+            case "file":
                 viewModel?.FilterDataWithType(ClipType.File);
                 break;
         }
@@ -323,16 +317,6 @@ public partial class SmallWindow
         ListScrollToFirst();
     }
 
-    #region win32
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-    #endregion
-
     /// <summary>
     /// 显示搜索框
     /// Show search window
@@ -355,7 +339,7 @@ public partial class SmallWindow
             Left = left,
             searchAction = (content) =>
             {
-                searchTextBox.Text = content.Ht_IsEmpty() ? "搜索(文字or文件名)" : content;
+                searchTextBox.Text = content.Ht_IsEmpty() ? "搜索" : content;
                 viewModel?.SearchContent(content);
                 ListScrollToFirst();
             },
@@ -529,5 +513,14 @@ public partial class SmallWindow
     private static void CloseMenuItemClick(object sender, RoutedEventArgs e)
     {
         e.Handled = true;
+    }
+
+    private void ListItemMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var listBoxItem = (ListBoxItem)sender;
+        if (listBoxItem.IsSelected)
+            return;
+        historyListBox.SelectedItem = listBoxItem.Content;
+        e.Handled = true; // 可能需要根据实际需求决定是否阻止默认行为
     }
 }

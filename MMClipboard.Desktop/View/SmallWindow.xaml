@@ -17,8 +17,8 @@
         xmlns:model="clr-namespace:MMClipboard.Model"
         xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
         Title="妙剪记"
-        Width="480"
-        Height="750"
+        Width="400"
+        Height="650"
         d:DataContext="{d:DesignInstance Type=vm:ClipboardHistoryViewModel}"
         AllowsTransparency="True"
         Background="Transparent"
@@ -54,8 +54,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border Name="bg"
-                                Width="370"
+                        <Border x:Name="bg"
+                                Width="290"
                                 MaxHeight="270"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -63,7 +63,7 @@
                                 BorderThickness="2"
                                 CornerRadius="13"
                                 BorderBrush="White"
-                                MouseLeftButtonDown="SelectedItemEvent"
+                                MouseLeftButtonDown="HistoryListItemSelected"
                                 RenderTransformOrigin="0.5,0.5"
                                 SnapsToDevicePixels="True"
                                 UseLayoutRounding="True"
@@ -86,7 +86,7 @@
                             <Grid>
                                 <!--  header  -->
                                 <StackPanel Height="30"
-                                            Margin="10,10,10,0"
+                                            Margin="10,5,10,0"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Top"
                                             Orientation="Horizontal">
@@ -95,14 +95,14 @@
                                                VerticalAlignment="Center"
                                                FontSize="16"
                                                Foreground="White"
-                                               Text="来自：" />
+                                               Text="" />
                                     <TextBlock HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                FontSize="16"
                                                Foreground="White"
                                                Text="{Binding from}" />
-                                    <Image Width="25"
-                                           Height="25"
+                                    <Image Width="20"
+                                           Height="20"
                                            Margin="10,0,0,0"
                                            VerticalAlignment="Center"
                                            Source="{Binding exeIcon, IsAsync=True, Mode=OneWay}" />
@@ -110,7 +110,7 @@
                                 <!--  收藏按钮  -->
                                 <ht:UIButton x:Name="collectBtn"
                                              Width="30"
-                                             Margin="10,10,0,0"
+                                             Margin="10,5,0,0"
                                              HorizontalAlignment="Left"
                                              VerticalAlignment="Top"
                                              Background="{Binding collect, Converter={StaticResource historyItemCollectStateBgColorConverter}}"
@@ -122,7 +122,7 @@
                                 <!--  删除按钮  -->
                                 <ht:UIButton x:Name="deleteBtn"
                                              Width="30"
-                                             Margin="0,10,10,0"
+                                             Margin="0,5,10,0"
                                              HorizontalAlignment="Right"
                                              VerticalAlignment="Top"
                                              Background="Transparent"
@@ -133,11 +133,11 @@
                                              image="/Images/delete.png"
                                              toolTip="删除这一项记录" />
                                 <!--  文字  -->
-                                <emoji:TextBlock Margin="10,50,10,25"
+                                <emoji:TextBlock Margin="10,40,10,25"
                                                  HorizontalAlignment="Left"
                                                  VerticalAlignment="Top"
                                                  FontFamily="{StaticResource JetBrains Mono Regular}"
-                                                 FontSize="16"
+                                                 FontSize="14"
                                                  Foreground="White"
                                                  IsEnabled="False"
                                                  ClipToBounds="True"
@@ -150,30 +150,30 @@
                                                  UseLayoutRounding="True"
                                                  Visibility="{Binding clipType, Converter={StaticResource historyItemShowTextConverter}}" />
                                 <!--  图片  -->
-                                <Image Margin="10,50,10,25"
+                                <Image Margin="10,40,10,25"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Stretch="Uniform"
                                        Source="{Binding image, IsAsync=True, Mode=OneWay}"
                                        Visibility="{Binding clipType, Converter={StaticResource historyItemShowImageConverter}}" />
                                 <!--  文件  -->
-                                <StackPanel Margin="10,50,10,25"
+                                <StackPanel Margin="10,40,10,25"
                                             Visibility="{Binding clipType, Converter={StaticResource historyItemShowFileConverter}}"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Top"
                                             Orientation="Vertical">
                                     <!-- 文件Logo -->
                                     <Image HorizontalAlignment="Center"
-                                           Width="30"
-                                           Height="30"
+                                           Width="20"
+                                           Height="20"
                                            Source="{Binding fileIcon, IsAsync=True, Mode=OneWay}"
                                            Stretch="Uniform" />
                                     <!-- 文件名 -->
                                     <emoji:TextBlock Margin="0,10,0,0"
                                                      HorizontalAlignment="Center"
                                                      VerticalAlignment="Center"
-                                                     FontFamily="{StaticResource JetBrains Mono Regular}"
-                                                     FontSize="16"
+                                                     FontSize="14"
+                                                     FontWeight="Bold"
                                                      Foreground="White"
                                                      IsEnabled="False"
                                                      ClipToBounds="True"
@@ -185,11 +185,10 @@
                                                      TextWrapping="WrapWithOverflow"
                                                      UseLayoutRounding="True" />
                                     <!-- 文件地址 -->
-                                    <emoji:TextBlock Margin="0,25,0,0"
+                                    <emoji:TextBlock Margin="0,15,0,5"
                                                      HorizontalAlignment="Center"
                                                      VerticalAlignment="Center"
-                                                     FontFamily="{StaticResource JetBrains Mono Regular}"
-                                                     FontSize="16"
+                                                     FontSize="14"
                                                      Foreground="White"
                                                      IsEnabled="False"
                                                      ClipToBounds="True"
@@ -237,22 +236,6 @@
                                                 <SineEase EasingMode="EaseIn" />
                                             </ColorAnimation.EasingFunction>
                                         </ColorAnimation>
-                                        <!-- <DoubleAnimation Storyboard.TargetName="bg" -->
-                                        <!--                  Storyboard.TargetProperty="Width" -->
-                                        <!--                  To="350" -->
-                                        <!--                  Duration="0:0:0.25"> -->
-                                        <!--     <DoubleAnimation.EasingFunction> -->
-                                        <!--         <SineEase EasingMode="EaseIn" /> -->
-                                        <!--     </DoubleAnimation.EasingFunction> -->
-                                        <!-- </DoubleAnimation> -->
-                                        <!-- <DoubleAnimation Storyboard.TargetName="bg" -->
-                                        <!--                  Storyboard.TargetProperty="Height" -->
-                                        <!--                  To="160" -->
-                                        <!--                  Duration="0:0:0.25"> -->
-                                        <!--     <DoubleAnimation.EasingFunction> -->
-                                        <!--         <SineEase EasingMode="EaseIn" /> -->
-                                        <!--     </DoubleAnimation.EasingFunction> -->
-                                        <!-- </DoubleAnimation> -->
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -302,7 +285,7 @@
         </Style>
     </Window.Resources>
     <Border Margin="40,30,40,30"
-            Background="{Binding bgColor}"
+            Background="{Binding backgroundModel.backgroundColor}"
             BorderBrush="White"
             BorderThickness="1"
             CornerRadius="13">
@@ -317,11 +300,11 @@
             <!--  高斯模糊背景  -->
             <materialDesign:Card Background="Transparent"
                                  UniformCornerRadius="13"
-                                 Visibility="{Binding BackgroundImgVisibility, FallbackValue=Visible}">
+                                 Visibility="{Binding backgroundModel.backgroundImageVisibility, FallbackValue=Visible}">
                 <Grid>
                     <Image HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Source="{Binding backgroundImg}"
+                           Source="{Binding backgroundModel.backgroundImage}"
                            Stretch="UniformToFill">
                         <Image.Effect>
                             <BlurEffect Radius="20" />
@@ -389,10 +372,12 @@
                 <!--  类型筛选按钮  -->
                 <StackPanel Grid.Row="0"
                             VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
                             Orientation="Horizontal">
                     <ht:UIButton x:Name="allBtn"
+                                 Tag="all"
                                  Width="65"
-                                 Margin="12,0,0,0"
+                                 Margin="0,0,0,0"
                                  Background="{StaticResource 筛选按钮.All}"
                                  PreviewMouseLeftButtonDown="FilterButton_MouseLeftButtonDown"
                                  Style="{StaticResource UIButton_Title}"
@@ -402,9 +387,9 @@
                                  fontSize="16"
                                  title="全部"
                                  toolTip="当前时间复制过的内容" />
-                    <ht:UIButton x:Name="stringBtn"
+                    <ht:UIButton Tag="string"
                                  Width="65"
-                                 Margin="20,0,0,0"
+                                 Margin="12,0,0,0"
                                  Background="#646464"
                                  PreviewMouseLeftButtonDown="FilterButton_MouseLeftButtonDown"
                                  Style="{StaticResource UIButton_Title}"
@@ -414,9 +399,9 @@
                                  fontSize="16"
                                  title="文字"
                                  toolTip="当前时间复制过的文字" />
-                    <ht:UIButton x:Name="imageBtn"
+                    <ht:UIButton Tag="image"
                                  Width="65"
-                                 Margin="20,0,0,0"
+                                 Margin="12,0,0,0"
                                  Background="{StaticResource 筛选按钮.Image}"
                                  PreviewMouseLeftButtonDown="FilterButton_MouseLeftButtonDown"
                                  Style="{StaticResource UIButton_Title}"
@@ -426,9 +411,9 @@
                                  fontSize="16"
                                  title="图片"
                                  toolTip="当前时间复制过的图片" />
-                    <ht:UIButton x:Name="fileBtn"
+                    <ht:UIButton Tag="file"
                                  Width="65"
-                                 Margin="20,0,0,0"
+                                 Margin="12,0,0,0"
                                  Background="{StaticResource 筛选按钮.File}"
                                  PreviewMouseLeftButtonDown="FilterButton_MouseLeftButtonDown"
                                  Style="{StaticResource UIButton_Title}"
@@ -438,28 +423,28 @@
                                  fontSize="16"
                                  title="文件"
                                  toolTip="当前时间复制过的文件" />
-                    <ht:UIButton x:Name="collectBtn"
-                                 Width="30"
-                                 Margin="20,0,0,0"
+                </StackPanel>
+                <!--  时间筛选和搜索  -->
+                <StackPanel Grid.Row="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                    <!-- 收藏按钮 -->
+                    <ht:UIButton Width="30"
+                                 Margin="0,0,0,0"
                                  Background="{Binding isCollect, Converter={StaticResource historyItemCollectStateBgColorConverter}}"
                                  PreviewMouseLeftButtonDown="collectBtn_MouseLeftButtonDown"
                                  Style="{StaticResource UIButton_Image}"
                                  borderColor="White"
                                  borderWidth="0"
                                  highLightColor="#F57C00"
-                                 image="{Binding isCollect, Converter={StaticResource historyItemCollectStateConverter}}"
+                                 image="{Binding isCollect, Converter={StaticResource historyItemCollectStateConverter},FallbackValue=/Images/noCollect.png}"
                                  toolTip="收藏的内容" />
-                </StackPanel>
-                <!--  时间筛选和搜索  -->
-                <StackPanel Grid.Row="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
                     <!--  时间  -->
                     <Grid x:Name="chooseDateGrid"
-                          Width="160"
+                          Width="100"
                           Height="28"
-                          Margin="0,0,5,0"
+                          Margin="15,0,0,0"
                           Background="Transparent"
                           Cursor="Hand"
                           MouseLeftButtonUp="Calender_MouseLeftButtonDown">
@@ -473,12 +458,11 @@
                                        Height="20"
                                        Margin="5,0,0,0"
                                        Source="/Images/Calendar.png" />
-                                <TextBlock Width="95"
-                                           Margin="18,1,0,0"
+                                <TextBlock Width="60"
+                                           Margin="5,0,0,0"
                                            HorizontalAlignment="Center"
-                                           FontFamily="{StaticResource JetBrains Mono Regular}"
-                                           FontSize="16"
                                            Style="{StaticResource Default_14_White_VCenter}"
+                                           FontSize="12"
                                            Text="{Binding selectDateStr, FallbackValue=所有时间}"
                                            TextAlignment="Center" />
                             </StackPanel>
@@ -486,9 +470,9 @@
                     </Grid>
                     <!--  搜索  -->
                     <Grid x:Name="searchGrid"
-                          Width="160"
+                          Width="80"
                           Height="28"
-                          Margin="5,0,0,0"
+                          Margin="15,0,0,0"
                           Background="Transparent"
                           Cursor="Hand"
                           MouseLeftButtonUp="SearchGridMouseLeftButtonUp">
@@ -496,29 +480,28 @@
                                 BorderBrush="White"
                                 BorderThickness="1"
                                 CornerRadius="5">
-                            <StackPanel Width="160"
-                                        Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <Image Width="20"
                                        Height="20"
                                        Margin="5,0,0,0"
                                        Source="/Images/Search.png" />
                                 <TextBlock x:Name="searchTextBox"
-                                           Width="126"
+                                           Width="40"
                                            Margin="5,0,0,0"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           FontFamily="{StaticResource JetBrains Mono Regular}"
+                                           TextAlignment="Center"
                                            FontSize="12"
                                            Foreground="White"
                                            IsEnabled="True"
-                                           Text="搜索(文字or文件名)"
+                                           Text="搜索"
                                            TextTrimming="CharacterEllipsis" />
                             </StackPanel>
                         </Border>
                     </Grid>
-                    <ht:UIButton x:Name="deleteBtn"
-                                 Width="30"
-                                 Margin="10,0,0,0"
+                    <!-- 删除按钮 -->
+                    <ht:UIButton Width="30"
+                                 Margin="15,0,0,0"
                                  Background="Transparent"
                                  PreviewMouseLeftButtonDown="DeleteAllContent"
                                  Style="{StaticResource UIButton_Image}"
@@ -532,6 +515,7 @@
                     <!--  记录列表  -->
                     <ListBox Name="historyListBox"
                              Margin="5,0,5,10"
+                             Height="468"
                              d:ItemsSource="{d:SampleData ItemCount=5}"
                              Background="Transparent"
                              BorderThickness="0"
@@ -547,9 +531,7 @@
                              SelectionMode="Single">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <VirtualizingStackPanel IsVirtualizing="True"
-                                                        VirtualizationMode="Standard"
-                                                        VerticalAlignment="Top"
+                                <VirtualizingStackPanel VerticalAlignment="Top"
                                                         Orientation="Vertical" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
