@@ -134,10 +134,14 @@ public class ClipItemModel : ObservableObject
             "Taskmgr" => "任务管理器",
             "WeChatAppEx" => "微信公众号",
             "regedit" => "注册表",
-            "rider64" => "JetBrains Rider",
             "MMClipboard" => "妙剪记",
             "Notepad" => "记事本",
             "wps" => "WPS",
+            "rider64" => "Rider",
+            "datagrip64" => "DataGrip",
+            "idea64" => "IntelliJ IDEA",
+            "pycharm64" => "PyCharm",
+            "webstorm64" => "WebStorm",
             _ => name
         };
     }
