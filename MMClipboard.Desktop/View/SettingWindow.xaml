@@ -420,7 +420,6 @@
                                                 Color="{Binding selectColor}" />
                 </Border>
             </Popup>
-
             <!-- 更新渠道选择 -->
             <Popup x:Name="updatePlacePopup"
                    AllowsTransparency="True"

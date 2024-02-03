@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -29,8 +30,6 @@ namespace MMClipboard.View;
 public partial class SysHookWindow
 {
     private const int AltCKeyEventId = 0x2884;
-
-    private IntPtr m_HWndNext;
 
     // 记录上一次复制的内容，避免重复保存数据
     private string oldClipContent;
@@ -130,7 +129,6 @@ public partial class SysHookWindow
     {
         if (SharedInstance.Instance.isCopyFromSelf)
             return;
-        SharedInstance.Instance.isCopyFromSelf = false;
         try
         {
             var hWnd = GetForegroundWindow(); //获取活动窗口句柄
@@ -217,6 +215,8 @@ public partial class SysHookWindow
             oldClipContent = clipContent;
             if (DataBaseController.AddDataFromList(dataArr))
                 SharedInstance.Instance.reloadDataAction?.Invoke();
+
+            SharedInstance.Instance.isCopyFromSelf = false;
         }
         catch (Exception e)
         {
@@ -225,7 +225,11 @@ public partial class SysHookWindow
     }
 
     private void Window_Closed(object sender, EventArgs e)
+    { }
+
+    protected override void OnClosing(CancelEventArgs e)
     {
+        base.OnClosing(e);
         if (RemoveClipboardFormatListener(selfHandle))
             "剪切板取消监听成功".Log();
     }

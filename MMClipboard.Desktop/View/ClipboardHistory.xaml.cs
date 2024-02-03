@@ -65,6 +65,7 @@ public partial class ClipboardHistory
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
+        viewModel?.Dispose();
         DataContext = null;
         SharedInstance.Instance.reloadDataAction = null;
     }
@@ -115,9 +116,10 @@ public partial class ClipboardHistory
     }
 
     /// <summary>
-    /// cell左键点击
+    /// Item选中事件
+    /// Item select event
     /// </summary>
-    private void SelectedItemEvent(object sender, MouseButtonEventArgs e)
+    private void HistoryListItemSelected(object sender, MouseButtonEventArgs e)
     {
         if (e.ClickCount != 1) return;
         var listBoxItem = FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource);
@@ -193,18 +195,18 @@ public partial class ClipboardHistory
         olbSelectTypeBtn.borderWidth = new Thickness(0);
         btn.borderWidth = new Thickness(1);
         olbSelectTypeBtn = btn;
-        switch (btn.Name)
+        switch (btn.Tag)
         {
-            case "allBtn":
+            case "all":
                 (DataContext as ClipboardHistoryViewModel)?.FilterDataWithType(ClipType.All);
                 break;
-            case "stringBtn":
+            case "string":
                 (DataContext as ClipboardHistoryViewModel)?.FilterDataWithType(ClipType.Text);
                 break;
-            case "imageBtn":
+            case "image":
                 (DataContext as ClipboardHistoryViewModel)?.FilterDataWithType(ClipType.Image);
                 break;
-            case "fileBtn":
+            case "file":
                 (DataContext as ClipboardHistoryViewModel)?.FilterDataWithType(ClipType.File);
                 break;
         }
