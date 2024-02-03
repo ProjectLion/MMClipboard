@@ -1,8 +1,8 @@
 {
-    "version": "1.24.130.2",
-    "updateMsg": "一、修复剪切板内容监听失败的问题。\n二、优化数据加载和文本类型数据加载。",
-    "updateUrl_Github": "https://github.com/ProjectLion/MMClipboard/releases/download/1.24.130.2/MMClipboard.zip",
-    "updateUrl_Gitee": "https://gitee.com/HtReturnTrue/MMClipboard/releases/download/1.24.130.2/MMClipboard.zip",
-    "updateTime": "2024-01-30",
-    "fileSize": 99798220
+    "version": "1.24.203.1",
+    "updateMsg": "\n一、修改UI大小和布局。\n二、复制粘贴的逻辑。\n三、新增部分程序名称转换。",
+    "updateUrl_Github": "https://github.com/ProjectLion/MMClipboard/releases/download/1.24.203.1/MMClipboard.zip",
+    "updateUrl_Gitee": "https://gitee.com/HtReturnTrue/MMClipboard/releases/download/1.24.203.1/MMClipboard.zip",
+    "updateTime": "2024-02-03",
+    "fileSize": 99799701
 }
