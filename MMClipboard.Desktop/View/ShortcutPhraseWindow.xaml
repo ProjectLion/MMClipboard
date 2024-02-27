@@ -1,0 +1,327 @@
+﻿<!--  🏷️ ****************************************************************  -->
+<!--  📄 文件名：ShortcutPhraseWindow.xaml  -->
+<!--  🏷️ ****************************************************************  -->
+<!--  👨🏽‍💻 创建者：Ht  -->
+<!--  ⏱️ 创建时间：2024-01-31 10:06:11  -->
+<!--  🏷️ ****************************************************************  -->
+
+
+<Window x:Class="MMClipboard.View.ShortcutPhraseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodel="clr-namespace:MMClipboard.ViewModel"
+        xmlns:model="clr-namespace:MMClipboard.Model"
+        xmlns:convert="clr-namespace:MMClipboard.Tool.BindingConverter"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:ht="clr-namespace:HtUIKit"
+        Title="设置"
+        Width="400"
+        Height="590"
+        d:DataContext="{d:DesignInstance Type=viewmodel:ShortcutPhraseViewModel}"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Icon="/Images/IconPng.png"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        mc:Ignorable="d">
+
+    <Window.Resources>
+        <convert:PhraseGroupColorConverter x:Key="phraseGroupColorConverter" />
+        <convert:NodataTipHideConverter x:Key="nodataTipHideConverter" />
+        <CollectionViewSource x:Key="groupedItems"
+                              Source="{Binding phrases}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="tagName" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <Style x:Key="PhraseItemStyle"
+               TargetType="ListViewItem">
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="Margin"
+                    Value="0,2,0,2" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border x:Name="bg"
+                                Width="290"
+                                Height="38"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#7F2b2b2b"
+                                BorderThickness="2"
+                                CornerRadius="5"
+                                BorderBrush="Transparent"
+                                MouseLeftButtonDown="ListItemSelected"
+                                RenderTransformOrigin="0.5,0.5"
+                                SnapsToDevicePixels="True"
+                                UseLayoutRounding="True"
+                                d:DataContext="{d:DesignInstance Type=model:ShortcutPhraseModel}">
+                            <Border.ContextMenu>
+                                <ContextMenu Style="{StaticResource CustomMenu}"
+                                             IsVisibleChanged="CellContextMenuChanged" />
+                            </Border.ContextMenu>
+                            <Grid>
+                                <!-- tag -->
+                                <Border Width="4"
+                                        HorizontalAlignment="Left"
+                                        Margin="8 8 0 8"
+                                        CornerRadius="2"
+                                        Background="{Binding tagColor, Converter={StaticResource phraseGroupColorConverter}}" />
+                                <!-- content -->
+                                <TextBlock Margin="20 8 30 8"
+                                           Foreground="White"
+                                           Text="{Binding title}"
+                                           TextTrimming="WordEllipsis"
+                                           FontSize="14"
+                                           TextWrapping="Wrap" />
+                                <!--  edit btn  -->
+                                <ht:UIButton x:Name="editBtn"
+                                             Width="25"
+                                             Height="25"
+                                             Margin="0,0,3,0"
+                                             Visibility="Hidden"
+                                             HorizontalAlignment="Right"
+                                             VerticalAlignment="Center"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Click="EditPhraseBtnClick"
+                                             Style="{StaticResource UIButton_Image}"
+                                             highLightColor="#F57C00"
+                                             image="/Images/edit.png"
+                                             imageMargin="5"
+                                             toolTip="编辑" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="bg"
+                                        Property="BorderBrush"
+                                        Value="#1E88E5" />
+                                <Setter TargetName="editBtn"
+                                        Property="Visibility"
+                                        Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver"
+                                     Value="False">
+                                <Setter TargetName="bg"
+                                        Property="BorderBrush"
+                                        Value="Transparent" />
+                                <Setter TargetName="editBtn"
+                                        Property="Visibility"
+                                        Value="Hidden" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="40,30,40,30"
+            Background="{Binding backgroundModel.backgroundColor, Mode=OneWay}"
+            BorderBrush="White"
+            BorderThickness="1"
+            CornerRadius="13">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20"
+                              Direction="270"
+                              ShadowDepth="5"
+                              Color="Black" />
+        </Border.Effect>
+        <Grid>
+            <!--  高斯模糊背景  -->
+            <materialDesign:Card Background="Transparent"
+                                 UniformCornerRadius="13"
+                                 Visibility="{Binding backgroundModel.backgroundImageVisibility, Mode=OneWay}">
+                <Grid>
+                    <Image HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Source="{Binding backgroundModel.backgroundImage, Mode=OneWay}"
+                           Stretch="UniformToFill">
+                        <Image.Effect>
+                            <BlurEffect Radius="20" />
+                        </Image.Effect>
+                    </Image>
+                </Grid>
+            </materialDesign:Card>
+            <!--  Header  -->
+            <Border Height="30"
+                    VerticalAlignment="Top"
+                    Background="{StaticResource HeaderColor}"
+                    CornerRadius="13 13 0 0"
+                    MouseLeftButtonDown="HeaderMoveAction">
+                <Grid>
+                    <!--  close btn  -->
+                    <ht:UIButton Width="25"
+                                 Height="25"
+                                 Margin="0,0,8,0"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Click="CloseAction"
+                                 Style="{StaticResource UIButton_Image}"
+                                 highLightColor="#F57C00"
+                                 image="/Images/Close1.png"
+                                 imageMargin="5"
+                                 toolTip="关闭" />
+                    <!--  title  -->
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource JetBrains Mono Regular}"
+                               FontSize="16"
+                               Foreground="White"
+                               Text="快 捷 短 语"
+                               TextAlignment="Center">
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="欢迎使用妙剪记"
+                                     Style="{StaticResource UIToolTip_Normal}" />
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <!--  setting btn  -->
+                    <ht:UIButton Width="25"
+                                 Height="25"
+                                 Margin="8,0,0,0"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Click="SettingBtnClick"
+                                 Style="{StaticResource UIButton_Image}"
+                                 highLightColor="#F57C00"
+                                 image="/Images/SettingImg.png"
+                                 imageMargin="5"
+                                 toolTip="打开设置" />
+                    <!-- Add -->
+                    <ht:UIButton Width="25"
+                                 Height="25"
+                                 Margin="45,0,0,0"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Click="AddPhraseBtnClick"
+                                 Style="{StaticResource UIButton_Image}"
+                                 highLightColor="#F57C00"
+                                 image="/Images/Add.png"
+                                 imageMargin="5"
+                                 toolTip="新增一条常用短语" />
+                </Grid>
+            </Border>
+            <!-- 搜索 -->
+            <Border x:Name="bg"
+                    Height="30"
+                    Margin="10 35 10 0"
+                    VerticalAlignment="Top"
+                    Background="#7F646464"
+                    BorderThickness="0"
+                    CornerRadius="5"
+                    MouseLeftButtonDown="ListItemSelected"
+                    RenderTransformOrigin="0.5,0.5"
+                    SnapsToDevicePixels="True"
+                    UseLayoutRounding="True"
+                    d:DataContext="{d:DesignInstance Type=model:ShortcutPhraseModel}">
+                <Border.ContextMenu>
+                    <ContextMenu Style="{StaticResource CustomMenu}"
+                                 IsVisibleChanged="CellContextMenuChanged" />
+                </Border.ContextMenu>
+                <Grid>
+                    <Image Source="/Images/Search.png"
+                           Width="15"
+                           Height="15"
+                           HorizontalAlignment="Left"
+                           Margin="5 0 0 0" />
+                    <TextBlock Margin="40 3 8 3"
+                               Foreground="White"
+                               Text="搜索"
+                               TextTrimming="WordEllipsis"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               TextWrapping="NoWrap" />
+                </Grid>
+            </Border>
+            <!-- 列表 -->
+            <ListView x:Name="phraseListBox"
+                      Margin="0,70,0,10"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      ItemContainerStyle="{StaticResource PhraseItemStyle}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                      ScrollViewer.PanningMode="VerticalOnly"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      ScrollViewer.CanContentScroll="True"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.VirtualizationMode="Standard"
+                      SelectionMode="Single">
+                <ListView.ItemsSource>
+                    <Binding Source="{StaticResource groupedItems}" />
+                </ListView.ItemsSource>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel VerticalAlignment="Top"
+                                                Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Margin"
+                                        Value="0,0,0,10" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Border Width="300"
+                                                    Background="#7F646464"
+                                                    CornerRadius="6">
+                                                <Expander Background="Transparent"
+                                                          IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       FontWeight="Bold"
+                                                                       Foreground="White"
+                                                                       FontSize="18"
+                                                                       VerticalAlignment="Center" />
+                                                            <TextBlock Text="{Binding ItemCount, StringFormat='共{0}个'}"
+                                                                       FontSize="16"
+                                                                       Foreground="Orange"
+                                                                       Margin="20,0,0,0"
+                                                                       VerticalAlignment="Center" />
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+            </ListView>
+            <!--  nodata tip  -->
+            <TextBlock Margin="0,70,0,10"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="{StaticResource JetBrains Mono Regular}"
+                       FontSize="18"
+                       FontWeight="Light"
+                       Foreground="#FFFFFD24"
+                       Text="没有快捷短语"
+                       Visibility="{Binding phrases, Converter={StaticResource nodataTipHideConverter}}" />
+        </Grid>
+    </Border>
+</Window>
