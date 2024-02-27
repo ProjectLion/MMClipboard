@@ -34,7 +34,7 @@
         <convert:HistoryItemFileNameConverter x:Key="historyItemFileNameConverter" />
         <convert:HistoryItemCollectStateConverter x:Key="historyItemCollectStateConverter" />
         <convert:HistoryItemCollectStateBgColorConverter x:Key="historyItemCollectStateBgColorConverter" />
-        <convert:HistoryItemTextLengthConverter x:Key="historyItemTextLengthConverter" />
+        <convert:HistoryItemTextCutConverter x:Key="historyItemTextCutConverter" />
         <!--  历史记录 item style  -->
         <Style x:Key="HistoryItemStyle"
                TargetType="ListBoxItem">
@@ -47,14 +47,14 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border Name="bg"
+                        <Border x:Name="bg"
                                 Width="280"
                                 Height="330"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Background="{Binding clipType, Converter={StaticResource historyItemBackgroundColorConverter}}"
                                 BorderThickness="1"
-                                CornerRadius="13"
+                                CornerRadius="9"
                                 MouseLeftButtonDown="HistoryListItemSelected"
                                 RenderTransformOrigin="0.5,0.5"
                                 SnapsToDevicePixels="True"
@@ -134,22 +134,23 @@
                                              image="/Images/delete.png"
                                              toolTip="删除这一项记录" />
                                 <!--  文字  -->
-                                <emoji:TextBlock Margin="10,40,10,25"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Top"
-                                                 FontFamily="{StaticResource JetBrains Mono Regular}"
-                                                 FontSize="16"
-                                                 Foreground="White"
-                                                 IsEnabled="False"
-                                                 ClipToBounds="True"
-                                                 SnapsToDevicePixels="True"
-                                                 Text="{Binding content, Converter={StaticResource historyItemTextLengthConverter}}"
-                                                 TextOptions.TextFormattingMode="Display"
-                                                 TextOptions.TextRenderingMode="ClearType"
-                                                 TextTrimming="CharacterEllipsis"
-                                                 TextWrapping="Wrap"
-                                                 UseLayoutRounding="True"
-                                                 Visibility="{Binding clipType, Converter={StaticResource historyItemShowTextConverter}}" />
+                                <emoji:RichTextBox Margin="10,40,10,26"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top"
+                                                   FontSize="14"
+                                                   FontFamily="{StaticResource JetBrains Mono Regular}"
+                                                   Foreground="White"
+                                                   ClipToBounds="True"
+                                                   BorderThickness="0"
+                                                   Background="Transparent"
+                                                   IsHitTestVisible="False"
+                                                   IsReadOnly="True"
+                                                   IsReadOnlyCaretVisible="True"
+                                                   SnapsToDevicePixels="True"
+                                                   Text="{Binding content, Mode=OneWay, Converter={StaticResource historyItemTextCutConverter}}"
+                                                   TextOptions.TextFormattingMode="Display"
+                                                   TextOptions.TextRenderingMode="ClearType"
+                                                   Visibility="{Binding clipType, Converter={StaticResource historyItemShowTextConverter}}" />
                                 <!--  图片  -->
                                 <Image Margin="10,40,10,25"
                                        HorizontalAlignment="Center"
@@ -475,25 +476,27 @@
                 <Grid Grid.Column="2"
                       Margin="0,0,20,0"
                       VerticalAlignment="Center">
-                    <ht:UIButton Width="40"
-                                 Height="40"
-                                 Margin="0,0,60,0"
+                    <ht:UIButton Width="35"
+                                 Height="35"
+                                 Margin="0,0,50,0"
                                  HorizontalAlignment="Right"
                                  Background="Transparent"
                                  PreviewMouseLeftButtonDown="DeleteAllContent"
                                  Style="{StaticResource UIButton_Image}"
                                  borderColor="White"
+                                 highLightColor="#F57C00"
                                  borderWidth="0"
                                  image="/Images/delete.png"
                                  toolTip="删除当前筛选出的记录&#x0A;列表上展示的记录数据将被删除" />
-                    <ht:UIButton Width="40"
-                                 Height="40"
+                    <ht:UIButton Width="35"
+                                 Height="35"
                                  Margin="0,0,5,0"
                                  HorizontalAlignment="Right"
                                  Background="Transparent"
                                  PreviewMouseLeftButtonDown="SettingBtnClick"
                                  Style="{StaticResource UIButton_Image}"
                                  borderColor="White"
+                                 highLightColor="#F57C00"
                                  borderWidth="0"
                                  image="/Images/SettingImg.png"
                                  toolTip="打开设置" />

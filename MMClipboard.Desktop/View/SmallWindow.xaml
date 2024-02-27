@@ -24,7 +24,6 @@
         Background="Transparent"
         Icon="/Images/IconPng.png"
         ResizeMode="NoResize"
-        ShowInTaskbar="False"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         Topmost="True"
@@ -41,7 +40,7 @@
         <convert:HistoryItemFileNameConverter x:Key="historyItemFileNameConverter" />
         <convert:HistoryItemCollectStateConverter x:Key="historyItemCollectStateConverter" />
         <convert:HistoryItemCollectStateBgColorConverter x:Key="historyItemCollectStateBgColorConverter" />
-        <convert:HistoryItemTextLengthConverter x:Key="historyItemTextLengthConverter" />
+        <convert:HistoryItemTextCutConverter x:Key="historyItemTextCutConverter" />
         <!--  历史记录 item style  -->
         <Style x:Key="HistoryItemStyle"
                TargetType="ListBoxItem">
@@ -50,7 +49,7 @@
             <Setter Property="VerticalAlignment"
                     Value="Top" />
             <Setter Property="Margin"
-                    Value="0,10,0,10" />
+                    Value="0,5,0,5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
@@ -61,8 +60,8 @@
                                 VerticalAlignment="Center"
                                 Background="{Binding clipType, Converter={StaticResource historyItemBackgroundColorConverter}}"
                                 BorderThickness="2"
-                                CornerRadius="13"
-                                BorderBrush="White"
+                                CornerRadius="6"
+                                BorderBrush="Transparent"
                                 MouseLeftButtonDown="HistoryListItemSelected"
                                 RenderTransformOrigin="0.5,0.5"
                                 SnapsToDevicePixels="True"
@@ -78,11 +77,6 @@
                                                   Opacity="0.795"
                                                   Color="#7F000000" />
                             </Border.Effect>
-                            <Border.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                </TransformGroup>
-                            </Border.RenderTransform>
                             <Grid>
                                 <!--  header  -->
                                 <StackPanel Height="30"
@@ -133,22 +127,23 @@
                                              image="/Images/delete.png"
                                              toolTip="删除这一项记录" />
                                 <!--  文字  -->
-                                <emoji:TextBlock Margin="10,40,10,25"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Top"
-                                                 FontFamily="{StaticResource JetBrains Mono Regular}"
-                                                 FontSize="14"
-                                                 Foreground="White"
-                                                 IsEnabled="False"
-                                                 ClipToBounds="True"
-                                                 SnapsToDevicePixels="True"
-                                                 Text="{Binding content, Mode=OneWay, Converter={StaticResource historyItemTextLengthConverter}}"
-                                                 TextOptions.TextFormattingMode="Display"
-                                                 TextOptions.TextRenderingMode="ClearType"
-                                                 TextTrimming="CharacterEllipsis"
-                                                 TextWrapping="Wrap"
-                                                 UseLayoutRounding="True"
-                                                 Visibility="{Binding clipType, Converter={StaticResource historyItemShowTextConverter}}" />
+                                <emoji:RichTextBox Margin="10,40,10,26"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top"
+                                                   FontSize="14"
+                                                   FontFamily="{StaticResource JetBrains Mono Regular}"
+                                                   Foreground="White"
+                                                   ClipToBounds="True"
+                                                   BorderThickness="0"
+                                                   Background="Transparent"
+                                                   IsHitTestVisible="False"
+                                                   IsReadOnly="True"
+                                                   IsReadOnlyCaretVisible="True"
+                                                   SnapsToDevicePixels="True"
+                                                   Text="{Binding content, Mode=OneWay, Converter={StaticResource historyItemTextCutConverter}}"
+                                                   TextOptions.TextFormattingMode="Display"
+                                                   TextOptions.TextRenderingMode="ClearType"
+                                                   Visibility="{Binding clipType, Converter={StaticResource historyItemShowTextConverter}}" />
                                 <!--  图片  -->
                                 <Image Margin="10,40,10,25"
                                        HorizontalAlignment="Center"
@@ -213,30 +208,12 @@
                         <ControlTemplate.Triggers>
                             <EventTrigger RoutedEvent="MouseEnter">
                                 <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="bg"
-                                                        Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-                                                        To="#1E88E5"
-                                                        Duration="0:0:0.15">
-                                            <ColorAnimation.EasingFunction>
-                                                <SineEase EasingMode="EaseIn" />
-                                            </ColorAnimation.EasingFunction>
-                                        </ColorAnimation>
-                                    </Storyboard>
+                                    <Storyboard />
                                 </BeginStoryboard>
                             </EventTrigger>
                             <EventTrigger RoutedEvent="MouseLeave">
                                 <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="bg"
-                                                        Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-                                                        To="White"
-                                                        Duration="0:0:0.15">
-                                            <ColorAnimation.EasingFunction>
-                                                <SineEase EasingMode="EaseIn" />
-                                            </ColorAnimation.EasingFunction>
-                                        </ColorAnimation>
-                                    </Storyboard>
+                                    <Storyboard />
                                 </BeginStoryboard>
                             </EventTrigger>
                             <Trigger Property="IsMouseOver"
@@ -244,12 +221,18 @@
                                 <Setter TargetName="deleteBtn"
                                         Property="Visibility"
                                         Value="Visible" />
+                                <Setter TargetName="bg"
+                                        Property="BorderBrush"
+                                        Value="#1E88E5" />
                             </Trigger>
                             <Trigger Property="IsMouseOver"
                                      Value="False">
                                 <Setter TargetName="deleteBtn"
                                         Property="Visibility"
                                         Value="Collapsed" />
+                                <Setter TargetName="bg"
+                                        Property="BorderBrush"
+                                        Value="Transparent" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -317,7 +300,7 @@
                     VerticalAlignment="Top"
                     Background="{StaticResource HeaderColor}"
                     CornerRadius="13 13 0 0"
-                    MouseDown="HeaderMoveAction">
+                    MouseLeftButtonDown="HeaderMoveAction">
                 <Grid>
                     <!--  close btn  -->
                     <ht:UIButton Width="25"
@@ -329,7 +312,7 @@
                                  BorderThickness="0"
                                  Click="CloseAction"
                                  Style="{StaticResource UIButton_Image}"
-                                 highLightColor="#55BDBDBD"
+                                 highLightColor="#F57C00"
                                  image="/Images/Close1.png"
                                  imageMargin="5"
                                  toolTip="关闭" />
@@ -343,7 +326,7 @@
                                  BorderThickness="0"
                                  Click="SettingBtnClick"
                                  Style="{StaticResource UIButton_Image}"
-                                 highLightColor="#55BDBDBD"
+                                 highLightColor="#F57C00"
                                  image="/Images/SettingImg.png"
                                  imageMargin="5"
                                  toolTip="打开设置" />
@@ -438,7 +421,7 @@
                                  borderColor="White"
                                  borderWidth="0"
                                  highLightColor="#F57C00"
-                                 image="{Binding isCollect, Converter={StaticResource historyItemCollectStateConverter},FallbackValue=/Images/noCollect.png}"
+                                 image="{Binding isCollect, Converter={StaticResource historyItemCollectStateConverter}}"
                                  toolTip="收藏的内容" />
                     <!--  时间  -->
                     <Grid x:Name="chooseDateGrid"
@@ -541,7 +524,7 @@
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                FontFamily="{StaticResource JetBrains Mono Regular}"
-                               FontSize="20"
+                               FontSize="18"
                                FontWeight="Light"
                                Foreground="#FFFFFD24"
                                Text="还没发现你剪切的内容"
