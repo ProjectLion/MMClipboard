@@ -2,7 +2,7 @@
 
 <h1 align="center">妙剪记</h1>
 
-这是一款漂亮的(自认为的🤣)Windows桌面端剪切板历史记录软件，目前支持**文本**、**图片**、**文件**的复制/剪切记录，所有数据均保存到本地数据库中，你的数据你自己掌控，**我们不会上传你的任何数据至云端**。
+这是一款漂亮的(自认为的🤣)Windows桌面端剪切板历史记录软件，目前支持**文本**、**图片**、**文件**的复制/剪切记录，所有数据均保存到本地数据库中，你的数据你自己掌控，**我不会上传你的任何数据至云端**。
 
 如果你喜欢这个项目或者它对你有用，请给我点个Star，感谢！
 
@@ -32,10 +32,11 @@
 - 🥒自定义窗口背景图(色)✅
 - 🌽自定义快捷键✅
 - 🍄App在线更新✅
+- 🍄快捷短语功能✅
 
 ### 🦤计划加入功能
-- 快捷短语
-- 更丰富的右键菜单
+- 快捷短语功能待完善。待完善部分功能：编辑、修改、取别名等。
+- 更丰富的右键菜单。
 
 ### 🎃下载
 - 无网络情况的用户请移步至 [Releases](https://github.com/ProjectLion/MMClipboard/releases) 下载安装包or压缩包后安装使用。
@@ -46,7 +47,8 @@
 - Windows11所有版本✅
 
 ### 🔧使用
-**安装后双击运行程序即开启监听，使用你定义的快捷键(默认Alt+C)呼出记录窗口点击相应的记录即可粘贴到你当前鼠标光标处**
+- **剪切板历史记录功能**：安装后双击运行程序即开启监听，使用你定义的快捷键(默认Alt+C)呼出记录窗口点击相应的记录即可粘贴到你当前鼠标光标处。
+- **快捷短语功能**：使用快捷键(Alt+~)呼出短语列表，点击记录即可粘贴到你当前鼠标光标处。
 
 ### 🔧使用过程中出现问题的解决办法
 - **如果出现无法监听复制内容的情况，请右下角退出App后以管理员方式运行**
@@ -59,8 +61,8 @@
   ![](./doc/preview/SmallSnip.png)
   - 横屏
   ![](./doc/preview/MaxSnip.png)
-  - 设置页面
-  ![](./doc/preview/SettingSnip.png)
+  - 快捷短语功能
+  ![](./doc/preview/ShortcutSnip.png)
 
 ## 🙏致谢 
 #### 感谢以下无私奉献的开源库的作者和贡献者们(排名不分先后)
@@ -73,6 +75,7 @@
 - WPF 系统托盘图标工具包 - [__Hardcodet.NotifyIcon.Wpf__](https://github.com/hardcodet/wpf-notifyicon)
 - WPF xaml行为事件工具包 - [__Microsoft.Xaml.Behaviors.Wpf__](https://github.com/Microsoft/XamlBehaviorsWpf)
 - WPF 内存释放工具包 - [__Lierda.WPFHelper__](https://www.nuget.org/packages/Lierda.WPFHelper)
+- WPF、WinForm全局监听按键工具包 - [__NHotkey__](https://github.com/thomaslevesque/NHotkey)
 
 ## ❗免责声明
 **禁止任何人以任何形式将其用于任何非法用途，对于使用该程序所造成的任何后果，所有创作者不承担任何责任。**
