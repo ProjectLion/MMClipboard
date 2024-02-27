@@ -10,9 +10,9 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using HtKit;
-using MMClipboard.Model;
 
 
 namespace MMClipboard.Tool;
@@ -111,17 +111,17 @@ public static class CacheHelper
     /// <summary>
     /// 删除缓存图片
     /// </summary>
-    /// <param name="item"></param>
-    public static void DeleteCacheImage(ClipItemModel item)
+    /// <param name="path"></param>
+    public static void DeleteCacheImage(string path)
     {
-        if (item.clipType is not ClipType.Image)
-            return;
         // 只删除缓存到程序目录下的图片文件,其他的用户的图片文件不能去动
-        if (!item.content.Contains(@"Cache\") || !Path.GetFileName(item.content).Contains("mm_"))
+        if (!path.Contains(@"Cache\") || !Path.GetFileName(path).Contains("mm_"))
+            return;
+        if (!File.Exists(path))
             return;
         try
         {
-            File.Delete(item.content);
+            File.Delete(path);
         }
         catch (Exception e)
         {
@@ -135,7 +135,7 @@ public static class CacheHelper
     /// <param name="path"></param>
     /// <param name="ac"></param>
     /// <returns></returns>
-    public static void LoadCacheImage(string path, Action<BitmapImage> ac)
+    public static void LoadCacheImage(string path, Action<BitmapSource> ac)
     {
         var p = path;
         if (!File.Exists(p))
@@ -154,7 +154,7 @@ public static class CacheHelper
         });
     }
 
-    private static void LoadImageAsync(byte[] buffer, Action<BitmapImage> ac)
+    private static void LoadImageAsync(byte[] buffer, Action<BitmapSource> ac)
     {
         // InvokeAsync()方法用于异步执行，防止在UI线程阻塞。
         // 不能使用Await，否则会阻塞UI线程。
@@ -162,15 +162,14 @@ public static class CacheHelper
         {
             try
             {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnDemand;
-                bitmap.StreamSource = new MemoryStream(buffer);
-                bitmap.DecodePixelHeight = 200;
-                bitmap.EndInit();
-                if (bitmap.CanFreeze)
-                    bitmap.Freeze();
-                ac?.Invoke(bitmap);
+                // 将BitmapImage转换为WriteableBitmap，性能更好了。嘻嘻
+                // 使用BitmapImage加载有些分辨率高的图片会报错，而WriteableBitmap不会，兼容性更好。嘻嘻
+                var stream = new MemoryStream(buffer);
+                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.None);
+                var frame = decoder.Frames[0];
+                var formatConverter = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+                var writeableBitmap = new WriteableBitmap(formatConverter);
+                ac?.Invoke(writeableBitmap);
             }
             catch (Exception e)
             {

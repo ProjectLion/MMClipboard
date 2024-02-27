@@ -8,20 +8,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using HtKit;
 using MMClipboard.Model;
 using MMClipboard.Tool;
 using MMClipboard.UserConfigs;
-using Clipboard = System.Windows.Clipboard;
-using TextDataFormat = System.Windows.TextDataFormat;
 
 
 namespace MMClipboard.ViewModel;
@@ -121,60 +117,27 @@ public class ClipboardHistoryViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// 复制文本到剪贴板
+    /// 复制文本
     /// </summary>
-    /// <param name="content"></param>
-    public void CopyText(string content)
+    private void CopyText(string content)
     {
-        Clipboard.Clear();
-        Clipboard.Flush();
-        SharedInstance.Instance.isCopyFromSelf = true;
-        try
+        CopyAndPasteHelper.CopyAndPasteText(content, () =>
         {
-            Clipboard.SetText(content, TextDataFormat.UnicodeText);
-        }
-        catch (Exception e)
-        {
-            e.Log();
-        }
-        PasteToOtherApps();
+            if (UserConfig.Default.config.isCopiedClose)
+                m_window.Close();
+        });
     }
 
     /// <summary>
-    /// 复制文件到剪贴板
+    /// 复制文件
     /// </summary>
-    /// <param name="path"></param>
     private void CopyFile(string path)
     {
-        Clipboard.Clear();
-        Clipboard.Flush();
-        SharedInstance.Instance.isCopyFromSelf = true;
-        try
+        CopyAndPasteHelper.CopyAndPasteFile(path, () =>
         {
-            if (!File.Exists(path))
-                return;
-            StringCollection sc = [path];
-            Clipboard.SetFileDropList(sc);
-        }
-        catch (Exception e)
-        {
-            e.Debug();
-        }
-        PasteToOtherApps();
-    }
-
-    /// <summary>
-    /// 粘贴到其他应用
-    /// </summary>
-    private async void PasteToOtherApps()
-    {
-        await Task.Run(() =>
-        {
-            SendKeys.SendWait("^v");
+            if (UserConfig.Default.config.isCopiedClose)
+                m_window.Close();
         });
-        if (UserConfig.Default.config.isCopiedClose)
-            m_window.Close();
-        SharedInstance.Instance.isCopyFromSelf = false;
     }
 
     /// <summary>
@@ -194,7 +157,7 @@ public class ClipboardHistoryViewModel : ObservableObject, IDisposable
     public void FilterDataWithDate(DateTime date)
     {
         selectDate = date;
-        m_dataSource = date == DateTime.MinValue ? DataBaseController.GetAllData() : DataBaseController.GetDataWithDate(date);
+        m_dataSource = date == DateTime.MinValue ? DataBaseController.GetAllHistoryData() : DataBaseController.GetHistoryDataWithDate(date);
         FilterData();
     }
 
@@ -229,10 +192,11 @@ public class ClipboardHistoryViewModel : ObservableObject, IDisposable
     public void DeleteItem(ClipItemModel item)
     {
         if (item == null) return;
-        if (!DataBaseController.DeleteData(item)) return;
+        if (!DataBaseController.DeleteHistoryData(item)) return;
         m_dataSource.Remove(item);
         FilterData();
-        CacheHelper.DeleteCacheImage(item);
+        if (item.clipType == ClipType.Image)
+            CacheHelper.DeleteCacheImage(item.content);
     }
 
     /// <summary>
@@ -242,7 +206,7 @@ public class ClipboardHistoryViewModel : ObservableObject, IDisposable
     public static void CollectItem(ClipItemModel item)
     {
         if (item == null) return;
-        if (DataBaseController.UpdateItemCollectState(item.id, item.collect == 0 ? 1 : 0)) item.collect = item.collect == 0 ? 1 : 0;
+        if (DataBaseController.UpdateHistoryDataCollectState(item.id, item.collect == 0 ? 1 : 0)) item.collect = item.collect == 0 ? 1 : 0;
     }
 
     /// <summary>
@@ -263,7 +227,7 @@ public class ClipboardHistoryViewModel : ObservableObject, IDisposable
         // 如果选中日期是所有时间、所有类型并且没有选中收藏，则清空数据，就不需要走foreach了
         if (selectDate == DateTime.MinValue && m_filter == ClipType.All && isCollect == 0)
         {
-            DataBaseController.DeleteAllData();
+            DataBaseController.DeleteAllHistoryData();
             CacheHelper.ClearCache(selectDate);
             // 清空所有数据后设置一下日历的起始时间和当前选中时间
             calendar.DisplayDateStart = DateTime.Today;
@@ -274,74 +238,136 @@ public class ClipboardHistoryViewModel : ObservableObject, IDisposable
         {
             // 其他的所有情况都可以直接忽略，直接遍历clips数组进行删除
             // 删除数据的同时如果是图片，并且缓存到本地的就一起删除
-            foreach (var item in _clips)
-            {
-                DataBaseController.DeleteData(item);
-                if (item.clipType == ClipType.Image)
-                    CacheHelper.DeleteCacheImage(item);
-            }
+            if (m_filter == ClipType.All)
+                DataBaseController.DeleteAllHistoryWithDate(selectDate);
+            else
+                DataBaseController.DeleteHistoryImageWithDate(selectDate, m_filter);
+            var temp = _clips;
+            foreach (var item in temp.Where(item => item.clipType == ClipType.Image))
+                Task.Run(() =>
+                {
+                    CacheHelper.DeleteCacheImage(item.content);
+                });
         }
         RefreshData();
     }
 
     #region 其他工具方法
 
-    /// <summary>
-    /// 打开网页
-    /// </summary>
-    /// <param name="path"></param>
-    public void OpenWebsite(string path)
+    public void CreateContextMenu(ContextMenu cm, ClipItemModel model)
     {
-        m_window.Close();
-        try
+        switch (model.clipType)
         {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {path}") { CreateNoWindow = true });
+            case ClipType.Text:
+                CreateMenuItem(cm, "复制文本", () =>
+                {
+                    CopyText(model.content);
+                });
+                var phraseMenu = CreateMenuItem(cm, "添加到快捷短语", null);
+                var tags = DataBaseController.GetAllPhraseTags();
+                if (tags == null || tags.Count == 0)
+                    tags = ["默认分组"];
+                foreach (var tag in tags)
+                    CreateMenuItem(phraseMenu, $"{tag}", () =>
+                    {
+                        DataBaseController.AddPhrase(ShortcutPhraseModel.Create(model.content, tag));
+                        SharedInstance.Instance.addPhraseAction?.Invoke();
+                    });
+                if (model.content.Ht_IsWebsite())
+                    CreateMenuItem(cm, "打开网页", () =>
+                    {
+                        OpenExternalWindowHelper.OpenWebsite(model.content);
+                    });
+                else if (model.content.Ht_IsFile())
+                    CreateMenuItem(cm, "打开文件所在目录", () =>
+                    {
+                        OpenExternalWindowHelper.SelectFileInFolder(model.content);
+                    });
+                else if (model.content.Ht_IsDirectory())
+                    CreateMenuItem(cm, "打开文件夹", () =>
+                    {
+                        OpenExternalWindowHelper.OpenFolder(model.content);
+                    });
+                break;
+            case ClipType.Image:
+            case ClipType.File:
+                CreateMenuItem(cm, "复制文件(夹)", () =>
+                {
+                    CopyFile(model.content);
+                });
+                CreateMenuItem(cm, "复制文件地址", () =>
+                {
+                    CopyText(model.content);
+                });
+                if (model.content.Ht_IsFile())
+                    CreateMenuItem(cm, "打开文件所在目录", () =>
+                    {
+                        OpenExternalWindowHelper.SelectFileInFolder(model.content);
+                    });
+                else if (model.content.Ht_IsDirectory())
+                    CreateMenuItem(cm, "打开文件夹", () =>
+                    {
+                        OpenExternalWindowHelper.OpenFolder(model.content);
+                    });
+                break;
         }
-        catch (Exception e)
+        // 不做任何操作菜单
+        var nothingItem = new MenuItem()
         {
-            e.Message.Log();
-        }
+            Header = "不做任何操作",
+            Style = (Style)Application.Current.Resources["CustomMenuItem"],
+            Foreground = HtColor.GetBrushWithString("#ffb74d")
+        };
+        nothingItem.Click += CloseMenuItemClick;
+
+        // 删除菜单
+        var deleteItem = new MenuItem()
+        {
+            Header = "删除",
+            Style = (Style)Application.Current.Resources["CustomMenuItem"],
+            Foreground = HtColor.GetBrushWithString("#E53935")
+        };
+        deleteItem.Click += (_, arg) =>
+        {
+            DeleteItem(model);
+            arg.Handled = true;
+        };
+
+        cm.Items.Add(deleteItem);
+        cm.Items.Add(nothingItem);
     }
 
     /// <summary>
-    /// 打开文件夹
+    /// 创建并添加一个MenuItem
+    /// Create and add a MenuItem
     /// </summary>
-    /// <param name="path"></param>
-    public void OpenFolder(string path)
+    /// <param name="cm"></param>
+    /// <param name="header"></param>
+    /// <param name="ac"></param>
+    public static MenuItem CreateMenuItem(ItemsControl cm, string header, Action ac)
     {
-        m_window.Close();
-        if (!Directory.Exists(path))
-            return;
-        try
+        var item = new MenuItem()
         {
-            Process.Start("explorer.exe", path);
-        }
-        catch (Exception e)
+            Header = header,
+            Foreground = Brushes.White,
+            Style = (Style)Application.Current.Resources["CustomMenuItem"]
+        };
+        item.Click += (_, arg) =>
         {
-            e.Message.Log();
-        }
+            ac?.Invoke();
+            arg.Handled = true;
+        };
+        cm.Items.Add(item);
+        return item;
     }
 
     /// <summary>
-    /// 打开文件所在目录并选中该文件
+    /// 不做任何操作的MenuItem
+    /// Do nothing
     /// </summary>
-    /// <param name="path"></param>
-    public void OpenFileInFolder(string path)
+    private static void CloseMenuItemClick(object sender, RoutedEventArgs e)
     {
-        m_window.Close();
-        if (!File.Exists(path))
-            return;
-        var tempP = Path.GetDirectoryName(path);
-        if (tempP == null)
-            return;
-        try
-        {
-            Process.Start("explorer.exe", $"/select,\"{path}\"");
-        }
-        catch (Exception e)
-        {
-            e.Message.Log();
-        }
+        e.Handled = true;
     }
 
     #endregion

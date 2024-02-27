@@ -67,5 +67,6 @@ public class WindowBackgroundModel : ObservableObject, IDisposable
         SharedInstance.Instance.backgroundColorChangeDelegate -= BackgroundColorChange;
         SharedInstance.Instance.backgroundChangeDelegate -= BackgroundChange;
         SharedInstance.Instance.backgroundImageChangeDelegate -= BackgroundImageChange;
+        GC.Collect();
     }
 }

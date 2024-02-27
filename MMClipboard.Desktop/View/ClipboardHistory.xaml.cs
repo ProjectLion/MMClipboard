@@ -13,12 +13,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using HtKit;
 using HtUIKit;
 using MMClipboard.Model;
 using MMClipboard.Tool;
 using MMClipboard.ViewModel;
-using Application = System.Windows.Application;
 using ListBox = System.Windows.Controls.ListBox;
 
 
@@ -29,9 +27,6 @@ namespace MMClipboard.View;
 /// </summary>
 public partial class ClipboardHistory
 {
-    // 标记一下记录列表是否可滚动，可能会存在跟文件列表滚动冲突
-    // private bool canScroll = true;
-
     private UIButton olbSelectTypeBtn;
 
     private DateTime m_startDate;
@@ -58,7 +53,7 @@ public partial class ClipboardHistory
     {
         base.OnApplyTemplate();
         olbSelectTypeBtn = allBtn;
-        m_startDate = DataBaseController.GetFirstDataDate();
+        m_startDate = DataBaseController.GetFirstDateWithHistory();
         calendar.DisplayDateStart = m_startDate;
         calendar.DisplayDateEnd = DateTime.Today;
     }
@@ -283,29 +278,25 @@ public partial class ClipboardHistory
         var fixY = sh / SystemParameters.PrimaryScreenHeight;
         var left = (positionOnScreen.X - 60) / fixX;
         var top = positionOnScreen.Y / fixY + 10;
-        if (SharedInstance.Instance.searchWindow != null)
+        if (SharedInstance.Instance.contentInputWindow != null)
         {
-            SharedInstance.Instance.searchWindow?.Close();
+            SharedInstance.Instance.contentInputWindow?.Close();
             return;
         }
-        SearchWindow searchWindow = new()
+        ContentInputWindow contentInputWindow = new(searchTextBox.Text, "搜索")
         {
             Top = top,
             Left = left,
-            searchAction = (content) =>
+            confirmAction = (content) =>
             {
                 searchTextBox.Text = content.Ht_IsEmpty() ? "搜索(文字or文件名)" : content;
                 (DataContext as ClipboardHistoryViewModel)?.SearchContent(content);
                 ListScrollToFirst();
             },
-            searchTextBox =
-            {
-                Text = searchTextBox.Text
-            },
             ShowActivated = true
         };
-        searchWindow.Show();
-        SharedInstance.Instance.searchWindow = searchWindow;
+        contentInputWindow.Show();
+        SharedInstance.Instance.contentInputWindow = contentInputWindow;
     }
 
     /// <summary>
@@ -351,120 +342,6 @@ public partial class ClipboardHistory
         if ((popup.PlacementTarget as Border).DataContext is not ClipItemModel model)
             return;
 
-        switch (model.clipType)
-        {
-            case ClipType.Text:
-                CreateMenuItem(cm, "复制文本", () =>
-                {
-                    viewModel?.CopyItem(model);
-                });
-                if (model.content.Ht_IsWebsite())
-                    CreateMenuItem(cm, "打开网页", () =>
-                    {
-                        viewModel?.OpenWebsite(model.content);
-                    });
-                else if (model.content.Ht_IsFile())
-                    CreateMenuItem(cm, "打开文件所在位置", () =>
-                    {
-                        viewModel?.OpenFileInFolder(model.content);
-                    });
-                else if (model.content.Ht_IsDirectory())
-                    CreateMenuItem(cm, "打开文件夹", () =>
-                    {
-                        viewModel?.OpenFolder(model.content);
-                    });
-                break;
-            case ClipType.Image:
-                CreateMenuItem(cm, "复制图片", () =>
-                {
-                    viewModel?.CopyItem(model);
-                });
-                CreateMenuItem(cm, "复制地址", () =>
-                {
-                    viewModel?.CopyText(model.content);
-                });
-                if (model.content.Ht_IsFile())
-                    CreateMenuItem(cm, "打开文件所在位置", () =>
-                    {
-                        viewModel?.OpenFileInFolder(model.content);
-                    });
-                break;
-            case ClipType.File:
-                CreateMenuItem(cm, "复制文件(夹)", () =>
-                {
-                    viewModel.CopyItem(model);
-                });
-                CreateMenuItem(cm, "复制地址", () =>
-                {
-                    viewModel.CopyText(model.content);
-                });
-                if (model.content.Ht_IsFile())
-                    CreateMenuItem(cm, "打开文件所在位置", () =>
-                    {
-                        viewModel?.OpenFileInFolder(model.content);
-                    });
-                else if (model.content.Ht_IsDirectory())
-                    CreateMenuItem(cm, "打开文件夹", () =>
-                    {
-                        viewModel?.OpenFolder(model.content);
-                    });
-                break;
-        }
-
-        // 不做任何操作菜单
-        var nothingItem = new MenuItem()
-        {
-            Header = "不做任何操作",
-            Style = (Style)Application.Current.Resources["CustomMenuItem"],
-            Foreground = HtColor.GetBrushWithString("#ffb74d")
-        };
-        nothingItem.Click += CloseMenuItemClick;
-
-        // 删除菜单
-        var deleteItem = new MenuItem()
-        {
-            Header = "删除这条记录",
-            Style = (Style)Application.Current.Resources["CustomMenuItem"],
-            Foreground = HtColor.GetBrushWithString("#E53935")
-        };
-        deleteItem.Click += (_, arg) =>
-        {
-            viewModel?.DeleteItem(model);
-            arg.Handled = true;
-        };
-        cm.Items.Add(deleteItem);
-        cm.Items.Add(nothingItem);
-    }
-
-    /// <summary>
-    /// 创建并添加一个MenuItem
-    /// Create and add a MenuItem
-    /// </summary>
-    /// <param name="cm"></param>
-    /// <param name="header"></param>
-    /// <param name="ac"></param>
-    private static void CreateMenuItem(ItemsControl cm, string header, Action ac)
-    {
-        var item = new MenuItem()
-        {
-            Header = header,
-            Foreground = Brushes.White,
-            Style = (Style)Application.Current.Resources["CustomMenuItem"]
-        };
-        item.Click += (_, arg) =>
-        {
-            ac?.Invoke();
-            arg.Handled = true;
-        };
-        cm.Items.Add(item);
-    }
-
-    /// <summary>
-    /// 不做任何操作的MenuItem
-    /// Do nothing
-    /// </summary>
-    private static void CloseMenuItemClick(object sender, RoutedEventArgs e)
-    {
-        e.Handled = true;
+        viewModel?.CreateContextMenu(cm, model);
     }
 }

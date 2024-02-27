@@ -53,6 +53,11 @@ public sealed class SharedInstance
     public Window mainWindow;
 
     /// <summary>
+    /// 常用短语窗口
+    /// </summary>
+    public Window phraseWindow;
+
+    /// <summary>
     /// 自定义的快捷键
     /// </summary>
     public Action<ModifierKeys, Key> registerHotKeyAction;
@@ -63,9 +68,14 @@ public sealed class SharedInstance
     public Action reloadDataAction;
 
     /// <summary>
+    /// 新增常用短语消息
+    /// </summary>
+    public Action addPhraseAction;
+
+    /// <summary>
     /// 搜索窗口
     /// </summary>
-    public SearchWindow searchWindow;
+    public ContentInputWindow contentInputWindow;
 
     /// <summary>
     /// 设置窗口
@@ -121,6 +131,17 @@ public sealed class SharedInstance
     {
         SmallWindow sw = new();
         Instance.mainWindow = sw;
+        sw.Show();
+    }
+
+    /// <summary>
+    /// 显示短语窗口
+    /// </summary>
+    public static void ShowPhraseWindow()
+    {
+        Instance.phraseWindow?.Close();
+        ShortcutPhraseWindow sw = new();
+        Instance.phraseWindow = sw;
         sw.Show();
     }
 

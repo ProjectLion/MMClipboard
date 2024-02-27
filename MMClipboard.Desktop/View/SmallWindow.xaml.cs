@@ -13,13 +13,11 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using HtKit;
 using HtUIKit;
 using MMClipboard.Model;
 using MMClipboard.Tool;
 using MMClipboard.ViewModel;
-using Application = System.Windows.Application;
 using ListBox = System.Windows.Controls.ListBox;
 
 
@@ -30,9 +28,6 @@ namespace MMClipboard.View;
 /// </summary>
 public partial class SmallWindow
 {
-    // 标记一下记录列表是否可滚动，可能会存在跟文件列表滚动冲突
-    // private bool canScroll = true;
-
     private UIButton olbSelectTypeBtn;
 
     private double fixX = 1;
@@ -57,7 +52,7 @@ public partial class SmallWindow
             viewModel?.RefreshData();
         };
         olbSelectTypeBtn = allBtn;
-        var mStartDate = DataBaseController.GetFirstDataDate();
+        var mStartDate = DataBaseController.GetFirstDateWithHistory();
         calendar.DisplayDateStart = mStartDate;
         calendar.DisplayDateEnd = DateTime.Today;
     }
@@ -81,7 +76,7 @@ public partial class SmallWindow
         fixY = sh / SystemParameters.PrimaryScreenHeight;
 
         // 计算窗口左上角的位置，以确保窗口显示在鼠标位置
-        var left = mousePosition.X / fixX - 240;
+        var left = mousePosition.X / fixX - 200;
         var top = mousePosition.Y / fixY;
 
         if (mousePosition.Y + 780 > sh)
@@ -90,10 +85,10 @@ public partial class SmallWindow
             left = mousePosition.X / fixX;
         }
 
-        if (mousePosition.X - 240 < 0)
+        if (mousePosition.X - 200 < 0)
             left = mousePosition.X / fixX;
-        else if (mousePosition.X + 240 > sw)
-            left = mousePosition.X / fixX - 480;
+        else if (mousePosition.X + 200 > sw)
+            left = mousePosition.X / fixX - 400;
 
         // 设置窗口的位置
         Left = left;
@@ -121,7 +116,7 @@ public partial class SmallWindow
     /// </summary>
     private void CloseAction(object sender, RoutedEventArgs e)
     {
-        SharedInstance.Instance.searchWindow?.Close();
+        SharedInstance.Instance.contentInputWindow?.Close();
         Close();
         e.Handled = true;
     }
@@ -152,7 +147,7 @@ public partial class SmallWindow
     private void ListBoxMouseWheel(object sender, MouseWheelEventArgs e)
     {
         var listBox = (ListBox)sender;
-        var scroll = FindVisualChild<ScrollViewer>(listBox);
+        var scroll = UIElementHelper.FindVisualChild<ScrollViewer>(listBox);
         switch (e.Delta)
         {
             case > 0:
@@ -165,27 +160,15 @@ public partial class SmallWindow
         e.Handled = true;
     }
 
-    private static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
-    {
-        if (obj == null) return null;
-        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
-        {
-            var child = VisualTreeHelper.GetChild(obj, i);
-            if (child is T dependencyObject) return dependencyObject;
-            var childItem = FindVisualChild<T>(child);
-            if (childItem != null) return childItem;
-        }
-        return null;
-    }
-
     /// <summary>
     /// Item选中事件
     /// Item selected event
     /// </summary>
     private void HistoryListItemSelected(object sender, MouseButtonEventArgs e)
     {
+        e.Handled = true;
         if (e.ClickCount != 1) return;
-        var listBoxItem = FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource);
+        var listBoxItem = UIElementHelper.FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource);
         if (listBoxItem == null)
             return;
         viewModel?.CopyItem(listBoxItem.Content as ClipItemModel);
@@ -199,23 +182,10 @@ public partial class SmallWindow
     {
         e.Handled = true;
         if (sender is not UIButton btn) return;
-        var a = FindAncestor<ListBoxItem>(btn);
+        var a = UIElementHelper.FindAncestor<ListBoxItem>(btn);
         if (a == null)
             return;
         viewModel?.DeleteItem(a.Content as ClipItemModel);
-    }
-
-    private static T FindAncestor<T>(DependencyObject current)
-        where T : DependencyObject
-    {
-        do
-        {
-            if (current is T ancestor) return ancestor;
-            current = VisualTreeHelper.GetParent(current);
-        }
-        while (current != null);
-
-        return null;
     }
 
     /// <summary>
@@ -226,7 +196,7 @@ public partial class SmallWindow
     {
         e.Handled = true;
         if (sender is not UIButton btn) return;
-        var a = FindAncestor<ListBoxItem>(btn);
+        var a = UIElementHelper.FindAncestor<ListBoxItem>(btn);
         if (a == null) return;
         ClipboardHistoryViewModel.CollectItem(a.Content as ClipItemModel);
     }
@@ -328,29 +298,25 @@ public partial class SmallWindow
         var positionOnScreen = searchGrid.PointToScreen(new Point(0, 0));
         var left = (positionOnScreen.X - 60) / fixX;
         var top = positionOnScreen.Y / fixY;
-        if (SharedInstance.Instance.searchWindow != null)
+        if (SharedInstance.Instance.contentInputWindow != null)
         {
-            SharedInstance.Instance.searchWindow?.Close();
+            SharedInstance.Instance.contentInputWindow?.Close();
             return;
         }
-        SearchWindow searchWindow = new()
+        ContentInputWindow contentInputWindow = new(searchTextBox.Text, "搜索")
         {
             Top = top,
             Left = left,
-            searchAction = (content) =>
+            confirmAction = (content) =>
             {
                 searchTextBox.Text = content.Ht_IsEmpty() ? "搜索" : content;
                 viewModel?.SearchContent(content);
                 ListScrollToFirst();
             },
-            searchTextBox =
-            {
-                Text = searchTextBox.Text
-            },
             ShowActivated = true
         };
-        searchWindow.Show();
-        SharedInstance.Instance.searchWindow = searchWindow;
+        contentInputWindow.Show();
+        SharedInstance.Instance.contentInputWindow = contentInputWindow;
     }
 
     /// <summary>
@@ -369,7 +335,7 @@ public partial class SmallWindow
     /// </summary>
     private void ListScrollToFirst()
     {
-        var scroll = FindVisualChild<ScrollViewer>(historyListBox);
+        var scroll = UIElementHelper.FindVisualChild<ScrollViewer>(historyListBox);
         scroll?.ScrollToTop();
     }
 
@@ -398,129 +364,6 @@ public partial class SmallWindow
         if ((popup.PlacementTarget as Border).DataContext is not ClipItemModel model)
             return;
 
-        switch (model.clipType)
-        {
-            case ClipType.Text:
-                CreateMenuItem(cm, "复制文本", () =>
-                {
-                    viewModel?.CopyItem(model);
-                });
-                if (model.content.Ht_IsWebsite())
-                    CreateMenuItem(cm, "打开网页", () =>
-                    {
-                        viewModel?.OpenWebsite(model.content);
-                    });
-                else if (model.content.Ht_IsFile())
-                    CreateMenuItem(cm, "打开文件所在目录", () =>
-                    {
-                        viewModel?.OpenFileInFolder(model.content);
-                    });
-                else if (model.content.Ht_IsDirectory())
-                    CreateMenuItem(cm, "打开文件夹", () =>
-                    {
-                        viewModel?.OpenFolder(model.content);
-                    });
-                break;
-            case ClipType.Image:
-                CreateMenuItem(cm, "复制图片", () =>
-                {
-                    viewModel?.CopyItem(model);
-                });
-                CreateMenuItem(cm, "复制图片地址", () =>
-                {
-                    viewModel?.CopyText(model.content);
-                });
-                if (model.content.Ht_IsFile())
-                    CreateMenuItem(cm, "打开文件所在目录", () =>
-                    {
-                        viewModel?.OpenFileInFolder(model.content);
-                    });
-                break;
-            case ClipType.File:
-                CreateMenuItem(cm, "复制文件(夹)", () =>
-                {
-                    viewModel.CopyItem(model);
-                });
-                CreateMenuItem(cm, "复制地址", () =>
-                {
-                    viewModel.CopyText(model.content);
-                });
-                if (model.content.Ht_IsFile())
-                    CreateMenuItem(cm, "打开文件所在目录", () =>
-                    {
-                        viewModel?.OpenFileInFolder(model.content);
-                    });
-                else if (model.content.Ht_IsDirectory())
-                    CreateMenuItem(cm, "打开文件夹", () =>
-                    {
-                        viewModel?.OpenFolder(model.content);
-                    });
-                break;
-        }
-        // 不做任何操作菜单
-        var nothingItem = new MenuItem()
-        {
-            Header = "不做任何操作",
-            Style = (Style)Application.Current.Resources["CustomMenuItem"],
-            Foreground = HtColor.GetBrushWithString("#ffb74d")
-        };
-        nothingItem.Click += CloseMenuItemClick;
-
-        // 删除菜单
-        var deleteItem = new MenuItem()
-        {
-            Header = "删除这条记录",
-            Style = (Style)Application.Current.Resources["CustomMenuItem"],
-            Foreground = HtColor.GetBrushWithString("#E53935")
-        };
-        deleteItem.Click += (_, arg) =>
-        {
-            viewModel?.DeleteItem(model);
-            arg.Handled = true;
-        };
-
-        cm.Items.Add(deleteItem);
-        cm.Items.Add(nothingItem);
-    }
-
-    /// <summary>
-    /// 创建并添加一个MenuItem
-    /// Create and add a MenuItem
-    /// </summary>
-    /// <param name="cm"></param>
-    /// <param name="header"></param>
-    /// <param name="ac"></param>
-    private static void CreateMenuItem(ItemsControl cm, string header, Action ac)
-    {
-        var item = new MenuItem()
-        {
-            Header = header,
-            Foreground = Brushes.White,
-            Style = (Style)Application.Current.Resources["CustomMenuItem"]
-        };
-        item.Click += (_, arg) =>
-        {
-            ac?.Invoke();
-            arg.Handled = true;
-        };
-        cm.Items.Add(item);
-    }
-
-    /// <summary>
-    /// 不做任何操作的MenuItem
-    /// Do nothing
-    /// </summary>
-    private static void CloseMenuItemClick(object sender, RoutedEventArgs e)
-    {
-        e.Handled = true;
-    }
-
-    private void ListItemMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        var listBoxItem = (ListBoxItem)sender;
-        if (listBoxItem.IsSelected)
-            return;
-        historyListBox.SelectedItem = listBoxItem.Content;
-        e.Handled = true; // 可能需要根据实际需求决定是否阻止默认行为
+        viewModel?.CreateContextMenu(cm, model);
     }
 }

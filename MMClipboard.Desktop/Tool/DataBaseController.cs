@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using FreeSql;
 using HtKit;
 using MMClipboard.Model;
@@ -40,11 +41,13 @@ public static class DataBaseController
 
     private static IFreeSql Sqlite => sqliteLazy.Value;
 
+    #region 剪切板历史相关
+
     /// <summary>
-    /// 获取所有数据
+    /// 获取所有剪切板历史数据
     /// </summary>
     /// <returns></returns>
-    public static List<ClipItemModel> GetAllData()
+    public static List<ClipItemModel> GetAllHistoryData()
     {
         try
         {
@@ -57,9 +60,9 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 根据日期获取数据
+    /// 根据日期获取历史数据
     /// </summary>
-    public static List<ClipItemModel> GetDataWithDate(DateTime date)
+    public static List<ClipItemModel> GetHistoryDataWithDate(DateTime date)
     {
         try
         {
@@ -73,10 +76,10 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 搜索内容
+    /// 搜索历史数据
     /// </summary>
     /// <param name="searchText"></param>
-    public static List<ClipItemModel> SearchContent(string searchText)
+    public static List<ClipItemModel> SearchHistoryDataWithText(string searchText)
     {
         try
         {
@@ -90,10 +93,10 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 获取所有收藏的数据
+    /// 获取所有收藏的历史数据
     /// </summary>
     /// <returns></returns>
-    public static List<ClipItemModel> GetAllCollectedData()
+    public static List<ClipItemModel> GetAllCollectedHistoryData()
     {
         try
         {
@@ -107,10 +110,10 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 添加数据
+    /// 添加历史数据
     /// </summary>
     /// <param name="mod"></param>
-    public static bool AddData(ClipItemModel mod)
+    public static bool AddHistoryData(ClipItemModel mod)
     {
         if (string.IsNullOrEmpty(mod.content))
             return false;
@@ -127,10 +130,10 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 添加数据列表
+    /// 从列表中添加历史数据
     /// </summary>
     /// <param name="arr"></param>
-    public static bool AddDataFromList(List<ClipItemModel> arr)
+    public static bool AddHistoryDataFromList(List<ClipItemModel> arr)
     {
         if (arr.Count == 0)
             return false;
@@ -149,11 +152,11 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 更新数据项
+    /// 更新历史数据的收藏状态
     /// </summary>
     /// <param name="id"></param>
     /// <param name="collect"></param>
-    public static bool UpdateItemCollectState(int id, int collect)
+    public static bool UpdateHistoryDataCollectState(int id, int collect)
     {
         try
         {
@@ -171,7 +174,7 @@ public static class DataBaseController
     /// 删除数据项
     /// </summary>
     /// <param name="mod"></param>
-    public static bool DeleteData(ClipItemModel mod)
+    public static bool DeleteHistoryData(ClipItemModel mod)
     {
         try
         {
@@ -186,10 +189,29 @@ public static class DataBaseController
     }
 
     /// <summary>
-    /// 删除某一天的所有数据
+    /// 删除某一天的所有type历史数据
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <param name="type"></param>
+    public static bool DeleteHistoryImageWithDate(DateTime dateTime, ClipType type)
+    {
+        try
+        {
+            Sqlite.Delete<ClipItemModel>().Where(x => x.date.ToString("yyyy-MM-dd") == dateTime.ToString("yyyy-MM-dd") && x.clipType == type).ExecuteAffrows();
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.Message.Debug();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 删除某一天的所有历史数据
     /// </summary>
     /// <param name="date"></param>
-    public static bool DeleteAllWithDate(DateTime date)
+    public static bool DeleteAllHistoryWithDate(DateTime date)
     {
         try
         {
@@ -209,27 +231,25 @@ public static class DataBaseController
     /// 删除数据表中的所有数据
     /// </summary>
     /// <returns></returns>
-    public static bool DeleteAllData()
+    public static void DeleteAllHistoryData()
     {
         try
         {
             Sqlite.Delete<ClipItemModel>()
                 .Where("1=1")
                 .ExecuteAffrows();
-            return true;
         }
         catch (Exception e)
         {
             e.Message.Debug();
-            return false;
         }
     }
 
     /// <summary>
-    /// 获取所有数据的最早时间
+    /// 获取所有历史数据中时间最早的一条
     /// </summary>
     /// <returns></returns>
-    public static DateTime GetFirstDataDate()
+    public static DateTime GetFirstDateWithHistory()
     {
         try
         {
@@ -241,6 +261,116 @@ public static class DataBaseController
             return DateTime.Today;
         }
     }
+
+    #endregion
+
+    #region 常用短语相关
+
+    /// <summary>
+    /// 获取所有常用短语
+    /// </summary>
+    /// <returns></returns>
+    public static List<ShortcutPhraseModel> GetAllPhrases()
+    {
+        try
+        {
+            var res = Sqlite.Select<ShortcutPhraseModel>().ToList();
+            return res;
+        }
+        catch (Exception e)
+        {
+            e.Message.Debug();
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// 获取所有标签名
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetAllPhraseTags()
+    {
+        var res = GetAllPhrases().GroupBy(x => x.tagName).ToList();
+        return res.Select(x => x.Key).ToList();
+    }
+
+    /// <summary>
+    /// 新增一条常用短语
+    /// </summary>
+    /// <param name="mod"></param>
+    /// <returns></returns>
+    public static bool AddPhrase(ShortcutPhraseModel mod)
+    {
+        try
+        {
+            Sqlite.Insert(mod).ExecuteIdentity();
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.Message.Debug();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 更新常用短语
+    /// </summary>
+    /// <param name="mod"></param>
+    /// <returns></returns>
+    public static bool UpdatePhrase(ShortcutPhraseModel mod)
+    {
+        try
+        {
+            Sqlite.Update<ShortcutPhraseModel>().Where(x => x.id == mod.id).Set(x => x.phrase, mod.phrase).ExecuteAffrows();
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.Message.Debug();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 删除常用短语
+    /// </summary>
+    /// <param name="mod"></param>
+    /// <returns></returns>
+    public static bool DeletePhrase(ShortcutPhraseModel mod)
+    {
+        try
+        {
+            Sqlite.Delete<ShortcutPhraseModel>().Where(x => x.id == mod.id).ExecuteAffrows();
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.Message.Debug();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 获取常用短语标签颜色
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    public static string GetPhraseTagColorWithTag(string tag)
+    {
+        try
+        {
+            var res = Sqlite.Select<ShortcutPhraseModel>().Where(x => x.tagName == tag).First();
+            return res.tagColor;
+        }
+        catch (Exception e)
+        {
+            e.Message.Log();
+            return null;
+        }
+    }
+
+    #endregion
 
     // 关闭数据库连接
     public static void Close()

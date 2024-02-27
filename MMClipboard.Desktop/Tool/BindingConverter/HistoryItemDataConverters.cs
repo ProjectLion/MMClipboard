@@ -18,9 +18,9 @@ using HtKit;
 
 namespace MMClipboard.Tool.BindingConverter;
 
-#region 文本类型的文字裁剪，优化TextBlock的显示性能，多余的字没必要显示
+#region 文本类型的文字裁剪，优化RichTextBox的显示性能，多余的字没必要显示
 
-public class HistoryItemTextLengthConverter : IValueConverter
+public class HistoryItemTextCutConverter : IValueConverter
 {
     object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

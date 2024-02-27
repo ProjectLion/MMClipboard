@@ -77,7 +77,7 @@
                     VerticalAlignment="Top"
                     Background="{StaticResource HeaderColor}"
                     CornerRadius="13 13 0 0"
-                    MouseDown="HeaderMoveAction">
+                    MouseLeftButtonDown="HeaderMoveAction">
                 <Grid>
                     <!--  close btn  -->
                     <ht:UIButton Width="25"
@@ -89,7 +89,7 @@
                                  BorderThickness="0"
                                  Click="CloseAction"
                                  Style="{StaticResource UIButton_Image}"
-                                 highLightColor="#55BDBDBD"
+                                 highLightColor="#F57C00"
                                  image="/Images/Close1.png"
                                  imageMargin="5"
                                  toolTip="关闭" />
@@ -103,7 +103,7 @@
                                  BorderThickness="0"
                                  Click="OpenGitHubPageAction"
                                  Style="{StaticResource UIButton_Image}"
-                                 highLightColor="#55BDBDBD"
+                                 highLightColor="#F57C00"
                                  image="/Images/AppMainPage.png"
                                  imageMargin="5"
                                  toolTip="GitHub主页" />

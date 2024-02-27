@@ -86,12 +86,12 @@ public class ClipItemModel : ObservableObject
     /// <summary>
     /// 用户copy的图片
     /// </summary>
-    public BitmapImage image
+    public BitmapSource image
     {
         get => _image;
         private set => SetProperty(ref _image, value);
     }
-    private BitmapImage _image;
+    private BitmapSource _image;
 
     public BitmapSource exeIcon
     {
@@ -166,7 +166,7 @@ public class ClipItemModel : ObservableObject
     /// <summary>
     /// 加载图标
     /// </summary>
-    public void LoadIconAsync()
+    private void LoadIconAsync()
     {
         // LoadImageAsync();
         // 加载程序图标
