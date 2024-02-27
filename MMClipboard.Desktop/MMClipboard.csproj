@@ -13,9 +13,9 @@
         <AssemblyName>MMClipboard</AssemblyName>
         <ApplicationIcon>Images\Logo.ico</ApplicationIcon>
         <NeutralLanguage>zh-CN</NeutralLanguage>
-        <AssemblyVersion>1.24.203.1</AssemblyVersion>
-        <FileVersion>1.24.203.1</FileVersion>
-        <Version>1.24.203.1</Version>
+        <AssemblyVersion>1.24.227.1</AssemblyVersion>
+        <FileVersion>1.24.227.1</FileVersion>
+        <Version>1.24.227.1</Version>
         <Copyright>© 2024 Ht. All rights reserved.</Copyright>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <SignAssembly>False</SignAssembly>
@@ -36,64 +36,64 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Tools\**"/>
-        <EmbeddedResource Remove="Tools\**"/>
-        <None Remove="Tools\**"/>
-        <Page Remove="Tools\**"/>
+        <Compile Remove="Tools\**" />
+        <EmbeddedResource Remove="Tools\**" />
+        <None Remove="Tools\**" />
+        <Page Remove="Tools\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Font\JetBrainsMono-Light.ttf"/>
-        <None Remove="Font\JetBrainsMono-Regular.ttf"/>
-        <None Remove="Images\Bg.png"/>
-        <None Remove="Images\Calendar.png"/>
-        <None Remove="Images\Clip.png"/>
-        <None Remove="Images\close.png"/>
-        <None Remove="Images\Close1.png"/>
-        <None Remove="Images\Collected.png"/>
-        <None Remove="Images\DefaultBg.png"/>
-        <None Remove="Images\defaultImage.png"/>
-        <None Remove="Images\delete.png"/>
-        <None Remove="Images\exe.png"/>
-        <None Remove="Images\FileIcons\文件夹.png"/>
-        <None Remove="Images\IconPng.png"/>
-        <None Remove="Images\Logo.ico"/>
-        <None Remove="Images\noCollect.png"/>
-        <None Remove="Images\Search.png"/>
-        <None Remove="Images\SettingImg.png"/>
-        <None Remove="Images\TaskbarIcon.ico"/>
-        <None Remove="Style\th0ud1jj.ai3~"/>
-        <None Remove="Tool\DataBaseController.cs~RF1df2fef.TMP"/>
-        <None Remove="View\dzdhqdra.sny~"/>
-        <None Remove="View\SearchWindow.xaml.cs~RF1df068d.TMP"/>
+        <None Remove="Font\JetBrainsMono-Light.ttf" />
+        <None Remove="Font\JetBrainsMono-Regular.ttf" />
+        <None Remove="Images\Bg.png" />
+        <None Remove="Images\Calendar.png" />
+        <None Remove="Images\Clip.png" />
+        <None Remove="Images\close.png" />
+        <None Remove="Images\Close1.png" />
+        <None Remove="Images\Collected.png" />
+        <None Remove="Images\DefaultBg.png" />
+        <None Remove="Images\defaultImage.png" />
+        <None Remove="Images\delete.png" />
+        <None Remove="Images\exe.png" />
+        <None Remove="Images\FileIcons\文件夹.png" />
+        <None Remove="Images\IconPng.png" />
+        <None Remove="Images\Logo.ico" />
+        <None Remove="Images\noCollect.png" />
+        <None Remove="Images\Search.png" />
+        <None Remove="Images\SettingImg.png" />
+        <None Remove="Images\TaskbarIcon.ico" />
+        <None Remove="Style\th0ud1jj.ai3~" />
+        <None Remove="Tool\DataBaseController.cs~RF1df2fef.TMP" />
+        <None Remove="View\dzdhqdra.sny~" />
+        <None Remove="View\SearchWindow.xaml.cs~RF1df068d.TMP" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
-        <PackageReference Include="Emoji.Wpf" Version="0.3.4"/>
-        <PackageReference Include="FreeSql" Version="3.2.810"/>
-        <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810"/>
-        <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.810"/>
-        <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0"/>
-        <PackageReference Include="MaterialDesignThemes" Version="4.9.0"/>
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77"/>
-        <PackageReference Include="NHotkey.Wpf" Version="3.0.0"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+        <PackageReference Include="Emoji.Wpf" Version="0.3.4" />
+        <PackageReference Include="FreeSql" Version="3.2.810" />
+        <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810" />
+        <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.810" />
+        <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+        <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+        <PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Resource Include="Images\Calendar.png"/>
-        <Resource Include="Images\close.png"/>
-        <Resource Include="Images\Close1.png"/>
-        <Resource Include="Images\Collected.png"/>
-        <Resource Include="Images\DefaultBg.png"/>
-        <Resource Include="Images\defaultImage.png"/>
-        <Resource Include="Images\delete.png"/>
-        <Resource Include="Images\Exe.png"/>
-        <Resource Include="Images\FileIcons\文件夹.png"/>
-        <Resource Include="Images\IconPng.png"/>
-        <Resource Include="Images\noCollect.png"/>
-        <Resource Include="Images\Search.png"/>
-        <Resource Include="Images\SettingImg.png"/>
+        <Resource Include="Images\Calendar.png" />
+        <Resource Include="Images\close.png" />
+        <Resource Include="Images\Close1.png" />
+        <Resource Include="Images\Collected.png" />
+        <Resource Include="Images\DefaultBg.png" />
+        <Resource Include="Images\defaultImage.png" />
+        <Resource Include="Images\delete.png" />
+        <Resource Include="Images\Exe.png" />
+        <Resource Include="Images\FileIcons\文件夹.png" />
+        <Resource Include="Images\IconPng.png" />
+        <Resource Include="Images\noCollect.png" />
+        <Resource Include="Images\Search.png" />
+        <Resource Include="Images\SettingImg.png" />
         <Resource Include="Images\TaskbarIcon.ico">
             <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         </Resource>
@@ -106,25 +106,25 @@
         <Content Include="Images\Logo.ico">
             <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         </Content>
-        <None Remove="Images\AppMainPage.png"/>
-        <Resource Include="Images\AppMainPage.png"/>
-        <None Remove="Images\FileDefaultLogo.png"/>
-        <Resource Include="Images\FileDefaultLogo.png"/>
-        <None Remove="Images\ItemMenu.png"/>
-        <Resource Include="Images\ItemMenu.png"/>
-        <None Remove="Images\DirectoryDefaultLogo.png"/>
-        <Resource Include="Images\DirectoryDefaultLogo.png"/>
-        <None Remove="Images\Add.png"/>
-        <Resource Include="Images\Add.png"/>
-        <None Remove="Images\edit.png"/>
-        <Resource Include="Images\edit.png"/>
+        <None Remove="Images\AppMainPage.png" />
+        <Resource Include="Images\AppMainPage.png" />
+        <None Remove="Images\FileDefaultLogo.png" />
+        <Resource Include="Images\FileDefaultLogo.png" />
+        <None Remove="Images\ItemMenu.png" />
+        <Resource Include="Images\ItemMenu.png" />
+        <None Remove="Images\DirectoryDefaultLogo.png" />
+        <Resource Include="Images\DirectoryDefaultLogo.png" />
+        <None Remove="Images\Add.png" />
+        <Resource Include="Images\Add.png" />
+        <None Remove="Images\edit.png" />
+        <Resource Include="Images\edit.png" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\HtKit\HtKit.csproj"/>
+        <ProjectReference Include="..\HtKit\HtKit.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <RuntimeHostConfigurationOption Include="Switch.System.Windows.Media.EnableHardwareAccelerationInRdp" Value="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Windows.Media.EnableHardwareAccelerationInRdp" Value="true" />
     </ItemGroup>
 </Project>
