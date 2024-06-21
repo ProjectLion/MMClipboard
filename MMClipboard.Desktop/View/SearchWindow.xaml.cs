@@ -44,7 +44,6 @@ public partial class SearchWindow : Window
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);
-        SharedInstance.Instance.searchWindow = null;
     }
 
     protected override void OnDeactivated(EventArgs e)

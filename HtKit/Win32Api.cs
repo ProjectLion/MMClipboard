@@ -86,6 +86,8 @@ public static class Win32Api
     [DllImport("user32.dll", EntryPoint = "SetWindowLong", CharSet = CharSet.Auto)]
     public static extern uint SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
 
+    public static int GWL_EXSTYLE = -20;
+
     [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", CharSet = CharSet.Auto)]
     public static extern IntPtr SetWindowLongPtr64(HandleRef hWnd, int nIndex, int dwNewLong);
 
